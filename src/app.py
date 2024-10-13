@@ -72,7 +72,7 @@ def compare_with_directory(source_image_path, directory):
         
         # Check if the file is an image (can be extended for other formats)
         if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
-            print(f"{Fore.CYAN}Comparing source image with {file_path}...{Style.RESET_ALL}")
+            print(f"{Fore.CYAN}Comparing source image with {Fore.BLUE}{file_path}...{Style.RESET_ALL}")
             score = get_images_similarity(source_image_path, file_path)
             
             # Color code the similarity score based on the value
