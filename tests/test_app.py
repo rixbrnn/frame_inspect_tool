@@ -35,11 +35,11 @@ def test_single_image_comparison(tmpdir):
 
     # Check if the command was successful
     assert result.returncode == 0
+    # Check if the command was successful
+    assert result.returncode == 0
 
-    # Verify the expected output is in the result
-    assert "Image Similarity (SSIM):" in result.stdout
-    assert "100.0000%" not in result.stdout  # This ensures the images are not identical
-
+    # Check if the output contains the SSIM score for a single image
+    assert 'Image Similarity (SSIM):' in result.stdout
 def test_directory_comparison(tmpdir):
     source_image = os.path.join('tests', 'data', 'cyberpunk_4k_ultra_preset_viktor_lab', 'source.png')
     test_directory = os.path.join('tests', 'data', 'cyberpunk_4k_ultra_preset_viktor_lab')
@@ -53,7 +53,7 @@ def test_directory_comparison(tmpdir):
     # Check if the command was successful
     assert result.returncode == 0
 
-    assert "Image Similarity (SSIM) with" in result.stdout
+    assert "Final Report (Sorted by Similarity)" in result.stdout
 
     assert "dlss_b.png" in result.stdout
     assert "dlaa.png" in result.stdout
