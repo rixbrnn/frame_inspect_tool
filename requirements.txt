@@ -4,3 +4,5 @@ opencv-python
 pytest
 colorama
 tqdm
+imagehash
+pillow

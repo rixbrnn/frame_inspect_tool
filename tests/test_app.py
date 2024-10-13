@@ -53,7 +53,7 @@ def test_directory_comparison(tmpdir):
     # Check if the command was successful
     assert result.returncode == 0
 
-    assert "Final Report (Sorted by Similarity)" in result.stdout
+    assert "Image Comparison Report (Sorted by Similarity)" in result.stdout
 
     assert "dlss_b.png" in result.stdout
     assert "dlaa.png" in result.stdout
@@ -68,4 +68,5 @@ def test_missing_arguments():
 
     # Command should fail since both -m and -d are missing
     assert result.returncode == 0
-    assert "Please provide either a modified image (-m) or a directory (-d)" in result.stdout
+    assert "Please provide valid arguments for either image or video comparison" in result.stdout
+    
