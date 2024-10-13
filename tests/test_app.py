@@ -19,7 +19,7 @@ def test_different_images():
 def test_nonexistent_file():
     with pytest.raises(Exception):
         # This should raise an error since the file doesn't exist
-        get_images_similarity('tests/data/non-existing-image.jpg', 'tests/data/non-existing-image.jpg')
+        app.get_images_similarity('tests/data/non-existing-image.jpg', 'tests/data/non-existing-image.jpg')
 
 
 # Test for the single image comparison
@@ -59,8 +59,9 @@ def test_directory_comparison(tmpdir):
     assert "dlaa.png" in result.stdout
 
 def test_missing_arguments():
+    source_image = os.path.join('tests', 'data', 'basic_test', 'table_source.jpg')
     result = subprocess.run(
-        ['python', 'src/app.py', '-s', 'tests/data/basic_test/table_source.jpg'],
+        ['python', 'src/app.py', '-s', source_image],
         capture_output=True,
         text=True
     )
