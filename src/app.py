@@ -43,6 +43,11 @@ import os
 from skimage.metrics import structural_similarity as ssim
 import argparse
 
+from colorama import Fore, Style, init
+
+# Initialize colorama
+init(autoreset=True)
+
 def get_images_similarity(source_image_path, modified_image_path):
     # Load images
     source_image = cv2.imread(source_image_path)
@@ -67,9 +72,18 @@ def compare_with_directory(source_image_path, directory):
         
         # Check if the file is an image (can be extended for other formats)
         if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
-            print(f"Comparing source image with {file_path}...")
+            print(f"{Fore.CYAN}Comparing source image with {file_path}...{Style.RESET_ALL}")
             score = get_images_similarity(source_image_path, file_path)
-            print(f"Image Similarity (SSIM) with {filename}: {score:.2f}%")
+            
+            # Color code the similarity score based on the value
+            if score >= 95:
+                color = Fore.GREEN
+            elif 80 <= score < 95:
+                color = Fore.YELLOW
+            else:
+                color = Fore.RED
+
+            print(f"Image Similarity (SSIM) with {Fore.BLUE}{filename}{Style.RESET_ALL}: {color}{score:.2f}%{Style.RESET_ALL}")
 
 def main():
     parser = argparse.ArgumentParser(description="Compare images using SSIM.")
@@ -91,14 +105,23 @@ def main():
     # If both source and modified are provided, do single image comparison
     if args.source and args.modified:
         score = get_images_similarity(args.source, args.modified)
-        print(f"Image Similarity (SSIM): {score:.2f}%")
+        
+        # Color code the similarity score based on the value
+        if score >= 95:
+            color = Fore.GREEN
+        elif 80 <= score < 95:
+            color = Fore.YELLOW
+        else:
+            color = Fore.RED
+        
+        print(f"{Fore.CYAN}Image Similarity (SSIM): {color}{score:.2f}%{Style.RESET_ALL}")
 
     # If source and directory are provided, do directory-based comparison
     elif args.source and args.directory:
         compare_with_directory(args.source, args.directory)
 
     else:
-        print("Please provide either a modified image (-m) or a directory (-d) for comparison.")
+        print(f"{Fore.RED}Please provide either a modified image (-m) or a directory (-d) for comparison.{Style.RESET_ALL}")
 
 if __name__ == "__main__":
     main()
