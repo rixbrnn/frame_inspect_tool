@@ -69,7 +69,7 @@ def compare_with_directory(source_image_path, directory):
         if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
             print(f"Comparing source image with {file_path}...")
             score = get_images_similarity(source_image_path, file_path)
-            print(f"Image Similarity (SSIM) with {filename}: {score:.4f}%")
+            print(f"Image Similarity (SSIM) with {filename}: {score:.2f}%")
 
 def main():
     parser = argparse.ArgumentParser(description="Compare images using SSIM.")
@@ -91,7 +91,7 @@ def main():
     # If both source and modified are provided, do single image comparison
     if args.source and args.modified:
         score = get_images_similarity(args.source, args.modified)
-        print(f"Image Similarity (SSIM): {score:.4f}%")
+        print(f"Image Similarity (SSIM): {score:.2f}%")
 
     # If source and directory are provided, do directory-based comparison
     elif args.source and args.directory:
