@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 
 
-
 # The diff image contains the actual image differences between the two images
 # and is represented as a floating point data type in the range [0,1] 
 # so we must convert the array to 8-bit unsigned integers in the range
