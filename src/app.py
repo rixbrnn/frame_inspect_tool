@@ -49,11 +49,14 @@ def compare_with_directory(source_image_path, directory):
     generate_report(results)
 
 def generate_report(results):
-    print("\n" + Fore.CYAN + "Final Report" + Style.RESET_ALL)
+    # Sort the results by SSIM score in descending order (most similar first)
+    sorted_results = sorted(results, key=lambda x: x['score'], reverse=True)
+
+    print("\n" + Fore.CYAN + "Final Report (Sorted by Similarity)" + Style.RESET_ALL)
     print(f"{'Image Name':<40}{'SSIM Score (%)':>15}")
     print("="*55)
     
-    for result in results:
+    for result in sorted_results:
         score = result['score']
         filename = result['filename']
         color = Fore.GREEN if score >= 99 else Fore.YELLOW if score >= 97 else Fore.RED
