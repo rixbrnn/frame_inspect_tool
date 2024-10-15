@@ -93,9 +93,68 @@ def find_video_overlap(video1_frames, video2_frames, hash_size=16, min_match_len
     return best_match_start1, best_end1, best_match_start2, best_end2
 
 
+def get_video_similarity(video1_path, video2_path, find_intersection=False):
+    """
+    Compare two videos using SSIM for each corresponding frame and calculate an average SSIM score.
+    Optionally, only compare the overlapping section if find_intersection is True.
 
-def generate_video_report(video_path1, video_path2, start1, start2, match_length):
-    print("\n" + Fore.CYAN + "Video Comparison Report" + Style.RESET_ALL)
-    print(f"Video 1: {video_path1} (Frames {start1} to {start1 + match_length - 1})")
-    print(f"Video 2: {video_path2} (Frames {start2} to {start2 + match_length - 1})")
-    print(f"Overlap length: {match_length} frames")
+    Parameters:
+    - video1_path: Path to the first video.
+    - video2_path: Path to the second video.
+    - find_intersection: If True, only compare the overlapping frames.
+
+    Returns:
+    - average_ssim: The average SSIM score across the compared frames.
+    """
+    # Get video frames
+    frames1 = get_video_frames(video1_path)
+    frames2 = get_video_frames(video2_path)
+
+    if find_intersection:
+        # Find the overlapping section between the videos using perceptual hashes
+        start1, end1, start2, end2 = find_video_overlap(frames1, frames2)
+
+        if start1 is None or start2 is None:
+            print(f"{Fore.RED}No overlapping frames found between the videos.{Style.RESET_ALL}")
+            return
+
+        print(f"Found overlapping section in Video 1: Frames {start1} to {end1}, and in Video 2: Frames {start2} to {end2}")
+
+        # Extract the overlapping frames
+        frames1 = frames1[start1:end1 + 1]
+        frames2 = frames2[start2:end2 + 1]
+
+    # Ensure the number of frames is the same
+    min_frames = min(len(frames1), len(frames2))
+    ssim_scores = []
+
+    for i in tqdm(range(min_frames), desc="Comparing video frames"):
+        frame1_gray = cv2.cvtColor(frames1[i], cv2.COLOR_BGR2GRAY)
+        frame2_gray = cv2.cvtColor(frames2[i], cv2.COLOR_BGR2GRAY)
+
+        score, _ = ssim(frame1_gray, frame2_gray, full=True)
+        ssim_scores.append(score)
+
+    average_ssim = np.mean(ssim_scores) * 100  # Convert to percentage
+    return average_ssim
+
+def generate_video_similarity_report(video1_path, video2_path, find_intersection=False):
+    """
+    Generate a video similarity report based on SSIM scores between two videos.
+    Optionally, only compare the overlapping section if find_intersection is True.
+
+    Parameters:
+    - video1_path: Path to the first video.
+    - video2_path: Path to the second video.
+    - find_intersection: If True, only compare the overlapping section.
+
+    Returns:
+    - None: Prints the similarity report.
+    """
+    average_ssim = get_video_similarity(video1_path, video2_path, find_intersection)
+
+    if average_ssim is None:
+        return
+
+    print("\n" + Fore.CYAN + "Video Similarity Report" + Style.RESET_ALL)
+    print(f"Average SSIM Similarity Score: {Fore.GREEN if average_ssim >= 99 else Fore.YELLOW if average_ssim >= 97 else Fore.RED}{average_ssim:.2f}%{Style.RESET_ALL}")
