@@ -4,13 +4,11 @@ import os
 from src import app;
 
 def test_identical_images():
-    # Test with identical images
     source_image = os.path.join('tests', 'data', 'basic_test', 'table_source.jpg')
     score = app.get_images_similarity(source_image, source_image)
     assert score == 100.0  # SSIM should be 1 for identical images
 
 def test_different_images():
-    # Test with different images
     source_image = os.path.join('tests', 'data', 'basic_test', 'table_source.jpg')
     target_image = os.path.join('tests', 'data', 'basic_test', 'table_modified.jpg')
     score = app.get_images_similarity(source_image, target_image)
@@ -18,11 +16,9 @@ def test_different_images():
 
 def test_nonexistent_file():
     with pytest.raises(Exception):
-        # This should raise an error since the file doesn't exist
         app.get_images_similarity('tests/data/non-existing-image.jpg', 'tests/data/non-existing-image.jpg')
 
 
-# Test for the single image comparison
 def test_single_image_comparison(tmpdir):
     source_image = os.path.join('tests', 'data', 'basic_test', 'table_source.jpg')
     modified_image = os.path.join('tests', 'data', 'basic_test', 'table_modified.jpg')
@@ -33,12 +29,9 @@ def test_single_image_comparison(tmpdir):
         text=True
     )
 
-    # Check if the command was successful
     assert result.returncode == 0
-    # Check if the command was successful
     assert result.returncode == 0
 
-    # Check if the output contains the SSIM score for a single image
     assert 'Image Similarity (SSIM):' in result.stdout
 def test_directory_comparison(tmpdir):
     source_image = os.path.join('tests', 'data', 'cyberpunk_4k_ultra_preset_viktor_lab', 'source.png')
@@ -50,7 +43,6 @@ def test_directory_comparison(tmpdir):
         text=True
     )
 
-    # Check if the command was successful
     assert result.returncode == 0
 
     assert "Image Comparison Report (Sorted by Similarity)" in result.stdout
@@ -66,7 +58,6 @@ def test_missing_arguments():
         text=True
     )
 
-    # Command should fail since both -m and -d are missing
     assert result.returncode == 0
     assert "Please provide valid arguments for either image or video comparison" in result.stdout
     
