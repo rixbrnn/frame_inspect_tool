@@ -32,23 +32,44 @@ def get_video_frames(video_path):
     cap.release()
     return frames
 
-def find_video_overlap(frames1, frames2, hash_size=16, threshold=3):
-    len1 = len(frames1)
-    len2 = len(frames2)
+from tqdm import tqdm
+
+def find_video_overlap(video1_frames, video2_frames, hash_size=16, min_match_length=3):
+    """
+    Find the overlap between two videos by comparing the perceptual hash of each frame.
+    
+    Parameters:
+    - video1_frames: List of frames from the first video.
+    - video2_frames: List of frames from the second video.
+    - hash_size: The size of the perceptual hash.
+    - min_match_length: The minimum number of consecutive matching frames to consider as overlap.
+    
+    Returns:
+    - best_start1: The start frame of the overlap in the first video.
+    - best_start2: The start frame of the overlap in the second video.
+    - best_end1: The end frame of the overlap in the first video.
+    - best_end2: The end frame of the overlap in the second video.
+    """
+
+    # Convert each frame of both videos to a perceptual hash
+    hashes1 = [get_frame_hash(frame) for frame in tqdm(video1_frames, desc="Hashing video 1 frames")]
+    hashes2 = [get_frame_hash(frame) for frame in tqdm(video2_frames, desc="Hashing video 2 frames")]
+
+    len1 = len(hashes1)
+    len2 = len(hashes2)
 
     best_match_start1 = None
     best_match_start2 = None
     longest_match_length = 0
 
-    hashes1 = [get_frame_hash(frame) for frame in tqdm(frames1, desc="Hashing video 1 frames")]
-    hashes2 = [get_frame_hash(frame) for frame in tqdm(frames2, desc="Hashing video 2 frames")]
-
+    # Iterate through the frames in both videos
     for i1 in range(len1):
         for i2 in range(len2):
             match_length = 0
             offset1 = i1
             offset2 = i2
 
+            # Check for matching consecutive frames
             while offset1 < len1 and offset2 < len2:
                 if compare_hashes(hashes1[offset1], hashes2[offset2]):
                     match_length += 1
@@ -57,15 +78,20 @@ def find_video_overlap(frames1, frames2, hash_size=16, threshold=3):
                 else:
                     break
 
-            if match_length > longest_match_length and match_length >= threshold:
+            # Update the best match if this one is longer than the previous
+            if match_length > longest_match_length and match_length >= min_match_length:
                 longest_match_length = match_length
                 best_match_start1 = i1
                 best_match_start2 = i2
 
     if longest_match_length == 0:
-        return None, None, 0
+        return None, None, None, None
 
-    return best_match_start1, best_match_start2, longest_match_length
+    best_end1 = best_match_start1 + longest_match_length - 1
+    best_end2 = best_match_start2 + longest_match_length - 1
+
+    return best_match_start1, best_end1, best_match_start2, best_end2
+
 
 
 def generate_video_report(video_path1, video_path2, start1, start2, match_length):

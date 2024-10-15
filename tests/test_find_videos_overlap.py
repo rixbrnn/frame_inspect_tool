@@ -1,51 +1,37 @@
-import numpy as np
-from PIL import Image
-from src import video_comparison 
+import pytest
+from unittest.mock import patch
+from src import video_comparison
 
-def create_mock_frame(color):
-    """Create a mock frame of a solid color."""
-    return np.full((100, 100, 3), color, dtype=np.uint8)
 
-def test_overlap_found():
-    """Test if the overlap is found between two sets of frames."""
+def mock_get_frame_hash(frame):
+    return frame
 
-    frames_video1 = [
-        create_mock_frame((255, 0, 0)),  # Red frame
-        create_mock_frame((0, 255, 0)),  # Green frame
-        create_mock_frame((0, 0, 255)),  # Blue frame (overlapping frame)
-        create_mock_frame((255, 255, 0)),  # Yellow frame (overlapping frame)
-        create_mock_frame((0, 255, 255)),  # Cyan frame (overlapping frame)
-    ]
+def mock_compare_hashes(hash1, hash2):
+    return hash1 == hash2
 
-    frames_video2 = [
-        create_mock_frame((0, 0, 255)),  # Blue frame (matches frame 2 in video1)
-        create_mock_frame((255, 255, 0)),  # Yellow frame (matches frame 3 in video1)
-        create_mock_frame((0, 255, 255)),  # Cyan frame (matches frame 4 in video1)
-    ]
+@patch('src.video_comparison.get_frame_hash', side_effect=mock_get_frame_hash)
+def test_find_video_overlap(mock_get_hash, mock_compare_hash):
 
-    start1, start2, match_length = video_comparison.find_video_overlap(frames_video1, frames_video2)
-
-    assert start1 == 2
-    assert start2 == 0
-    assert match_length == 3 
-
-def test_no_overlap():
-    """Test if no overlap is found between two sets of frames."""
     
-    frames_video1 = [
-        create_mock_frame((255, 0, 0)),  # Red frame
-        create_mock_frame((0, 255, 0)),  # Green frame
-        create_mock_frame((0, 0, 255)),  # Blue frame
-    ]
+    video1_frames = ["frame1", "frame2", "frame3", "frame4", "frame5"]
+    video2_frames = ["frameA", "frameB", "frame2", "frame3", "frame4", "frameC"]
+
+    start1, end1, start2, end2 = video_comparison.find_video_overlap(video1_frames, video2_frames, min_match_length=2)
+
+    assert start1 == 1  # Expected start index in video 1
+    assert end1 == 3    # Expected end index in video 1
+    assert start2 == 2  # Expected start index in video 2
+    assert end2 == 4    # Expected end index in video 2
+
+    video1_frames_no_overlap = ["frameX", "frameY", "frameZ"]
+    video2_frames_no_overlap = ["frameA", "frameB", "frameC"]
     
-    frames_video2 = [
-        create_mock_frame((255, 255, 255)),  # White frame
-        create_mock_frame((0, 0, 0)),  # Black frame
-        create_mock_frame((128, 128, 128)),  # Gray frame
-    ]
-    
-    start1, start2, match_length = video_comparison.find_video_overlap(frames_video1, frames_video2)
+    start1, end1, start2, end2 = video_comparison.find_video_overlap(video1_frames_no_overlap, video2_frames_no_overlap, min_match_length=2)
     
     assert start1 is None
+    assert end1 is None
     assert start2 is None
-    assert match_length == 0
+    assert end2 is None
+
+if __name__ == "__main__":
+    pytest.main()
