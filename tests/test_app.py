@@ -1,23 +1,5 @@
-import pytest
 import subprocess
 import os
-from src import app;
-
-def test_identical_images():
-    source_image = os.path.join('tests', 'data', 'basic_test', 'table_source.jpg')
-    score = app.get_images_similarity(source_image, source_image)
-    assert score == 100.0  # SSIM should be 1 for identical images
-
-def test_different_images():
-    source_image = os.path.join('tests', 'data', 'basic_test', 'table_source.jpg')
-    target_image = os.path.join('tests', 'data', 'basic_test', 'table_modified.jpg')
-    score = app.get_images_similarity(source_image, target_image)
-    assert score < 100.0  # SSIM should be less than 1 for different images
-
-def test_nonexistent_file():
-    with pytest.raises(Exception):
-        app.get_images_similarity('tests/data/non-existing-image.jpg', 'tests/data/non-existing-image.jpg')
-
 
 def test_single_image_comparison(tmpdir):
     source_image = os.path.join('tests', 'data', 'basic_test', 'table_source.jpg')

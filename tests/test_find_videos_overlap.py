@@ -1,7 +1,6 @@
 import numpy as np
-import imagehash
 from PIL import Image
-from src import app 
+from src import video_comparison 
 
 def create_mock_frame(color):
     """Create a mock frame of a solid color."""
@@ -24,7 +23,7 @@ def test_overlap_found():
         create_mock_frame((0, 255, 255)),  # Cyan frame (matches frame 4 in video1)
     ]
 
-    start1, start2, match_length = app.find_video_overlap(frames_video1, frames_video2)
+    start1, start2, match_length = video_comparison.find_video_overlap(frames_video1, frames_video2)
 
     assert start1 == 2
     assert start2 == 0
@@ -45,7 +44,7 @@ def test_no_overlap():
         create_mock_frame((128, 128, 128)),  # Gray frame
     ]
     
-    start1, start2, match_length = app.find_video_overlap(frames_video1, frames_video2)
+    start1, start2, match_length = video_comparison.find_video_overlap(frames_video1, frames_video2)
     
     assert start1 is None
     assert start2 is None
