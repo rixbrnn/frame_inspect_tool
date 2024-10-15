@@ -106,12 +106,10 @@ def get_video_similarity(video1_path, video2_path, find_intersection=False):
     Returns:
     - average_ssim: The average SSIM score across the compared frames.
     """
-    # Get video frames
     frames1 = get_video_frames(video1_path)
     frames2 = get_video_frames(video2_path)
 
     if find_intersection:
-        # Find the overlapping section between the videos using perceptual hashes
         start1, end1, start2, end2 = find_video_overlap(frames1, frames2)
 
         if start1 is None or start2 is None:
@@ -120,11 +118,9 @@ def get_video_similarity(video1_path, video2_path, find_intersection=False):
 
         print(f"Found overlapping section in Video 1: Frames {start1} to {end1}, and in Video 2: Frames {start2} to {end2}")
 
-        # Extract the overlapping frames
         frames1 = frames1[start1:end1 + 1]
         frames2 = frames2[start2:end2 + 1]
 
-    # Ensure the number of frames is the same
     min_frames = min(len(frames1), len(frames2))
     ssim_scores = []
 
