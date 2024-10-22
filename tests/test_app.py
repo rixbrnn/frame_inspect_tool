@@ -42,4 +42,13 @@ def test_missing_arguments():
 
     assert result.returncode == 0
     assert "Please provide valid arguments for either image or video comparison" in result.stdout
-    
+
+
+def test_video_comparison():
+    source_video = 'C:\workspace_recordings\cyberpunk_video_1080p_ultra\source.mp4'
+    target_video =  'C:\workspace_recordings\cyberpunk_video_1080p_ultra\dlss_up.mp4'
+    result = subprocess.run(
+        ['python', 'src/app.py', '-v1', source_video, '-v2', target_video, "--find-intersection"],
+        capture_output=True,
+        text=True
+    )

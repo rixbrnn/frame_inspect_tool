@@ -6,3 +6,4 @@ colorama
 tqdm
 imagehash
 pillow
+imageio-ffmpeg

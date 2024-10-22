@@ -8,7 +8,7 @@ import argparse
 from colorama import Fore, Style, init
 from skimage.metrics import structural_similarity as ssim
 from image_comparison import get_images_similarity, get_images_similarity_in_directory
-from video_comparison import generate_video_similarity_report
+from video_comparison import generate_video_similarity_report, measure_video_stability
 
 init(autoreset=True)
 
@@ -21,7 +21,8 @@ def main():
     parser.add_argument('-v1', '--video1', required=False, help="Path to the first video.")
     parser.add_argument('-v2', '--video2', required=False, help="Path to the second video.")
     parser.add_argument('--find-intersection', action='store_true', help="Find common section between two videos using perceptual hashing.")
-    
+    parser.add_argument('--stability', required=False, help="Measure the stability of a video using SSIM.")
+
     args = parser.parse_args()
 
     if args.source and args.modified:
@@ -34,7 +35,11 @@ def main():
 
     elif args.video1 and args.video2:
         generate_video_similarity_report(args.video1, args.video2, find_intersection=args.find_intersection)
-    
+
+    elif args.stability:
+        # Call the stability function
+        measure_video_stability(args.stability)
+
     else:
         print(f"{Fore.RED}Please provide valid arguments for either image or video comparison.{Style.RESET_ALL}")
 
