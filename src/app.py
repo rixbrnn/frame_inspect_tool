@@ -22,6 +22,7 @@ def main():
     parser.add_argument('-v2', '--video2', required=False, help="Path to the second video.")
     parser.add_argument('--find-intersection', action='store_true', help="Find common section between two videos using perceptual hashing.")
     parser.add_argument('--stability', required=False, help="Measure the stability of a video using SSIM.")
+    parser.add_argument('--method', required=False, help="What method to use when measuring the stability, can be either ssim or pixel (for pixel by pixel)")
 
     args = parser.parse_args()
 
@@ -38,7 +39,7 @@ def main():
 
     elif args.stability:
         # Call the stability function
-        measure_video_stability(args.stability)
+        measure_video_stability(args.stability, args.method)
 
     else:
         print(f"{Fore.RED}Please provide valid arguments for either image or video comparison.{Style.RESET_ALL}")

@@ -104,13 +104,15 @@ def find_video_overlap(video1_frames, video2_frames, hash_size=16, min_match_len
     return best_match_start1, best_end1, best_match_start2, best_end2
 
 
-def measure_video_stability(video_path):
+
+def measure_video_stability(video_path, method='ssim'):
     """
-    Measures the stability of a video by comparing consecutive frames using SSIM.
+    Measure the stability of a video using either SSIM or pixel-by-pixel comparison between consecutive frames.
     If a directory is provided, it processes all video files in the directory.
-    
+
     Parameters:
     - video_path: Path to a single video file or a directory of video files.
+    - method: The method used to measure stability ('ssim' for structural similarity, 'pixel' for pixel-by-pixel comparison).
     """
     if os.path.isdir(video_path):
         # If it's a directory, loop through all video files and measure stability
@@ -122,33 +124,54 @@ def measure_video_stability(video_path):
         print(f"{Fore.CYAN}Processing all videos in the directory: {video_path}{Style.RESET_ALL}")
         for video_file in video_files:
             print(f"\nProcessing video: {video_file}")
-            measure_video_stability(video_file)
+            measure_video_stability(video_file, method)
         return
 
-    # If it's a single video file, measure the stability using SSIM
-    print(f"{Fore.CYAN}Measuring stability for: {video_path}{Style.RESET_ALL}")
+    # If it's a single file, measure the stability based on the chosen method
+    print(f"{Fore.CYAN}Measuring stability for: {video_path} using {method.upper()}{Style.RESET_ALL}")
     frames = get_video_frames_with_imageio(video_path)
     
     if len(frames) < 2:
         print(f"{Fore.RED}Not enough frames to compare in video: {video_path}{Style.RESET_ALL}")
         return
 
-    ssim_scores = []
-    print(f"{Fore.CYAN}Comparing frames for stability in: {video_path}{Style.RESET_ALL}")
-    
-    for i in tqdm(range(1, len(frames)), desc="Comparing frames", unit="frame"):
-        # Convert the frames to grayscale for SSIM comparison
-        frame1_gray = cv2.cvtColor(frames[i-1], cv2.COLOR_BGR2GRAY)
-        frame2_gray = cv2.cvtColor(frames[i], cv2.COLOR_BGR2GRAY)
+    if method == 'ssim':
+        # SSIM-based stability measurement
+        ssim_scores = []
+        print(f"{Fore.CYAN}Comparing frames using SSIM for stability in: {video_path}{Style.RESET_ALL}")
+        
+        for i in tqdm(range(1, len(frames)), desc="Comparing frames", unit="frame"):
+            frame1_gray = cv2.cvtColor(frames[i-1], cv2.COLOR_BGR2GRAY)
+            frame2_gray = cv2.cvtColor(frames[i], cv2.COLOR_BGR2GRAY)
+            score, _ = ssim(frame1_gray, frame2_gray, full=True)
+            ssim_scores.append(score)
 
-        # Compute SSIM between the current and the previous frame
-        score, _ = ssim(frame1_gray, frame2_gray, full=True)
-        ssim_scores.append(score)
+        average_ssim = np.mean(ssim_scores) * 100  # Convert to percentage
+        print(f"{Fore.GREEN}Average SSIM for video stability in {video_path}: {average_ssim:.2f}%{Style.RESET_ALL}")
+        return average_ssim
 
-    # Calculate the average SSIM across all consecutive frames
-    average_ssim = np.mean(ssim_scores) * 100  # Convert to percentage
-    print(f"{Fore.GREEN}Average SSIM for video stability in {video_path}: {average_ssim:.2f}%{Style.RESET_ALL}")
-    return average_ssim
+    elif method == 'pixel':
+        # Pixel-by-pixel stability measurement
+        differences = []
+        print(f"{Fore.CYAN}Comparing frames using pixel-by-pixel method for stability in: {video_path}{Style.RESET_ALL}")
+        
+        for i in tqdm(range(1, len(frames)), desc="Comparing frames", unit="frame"):
+            current_frame = frames[i]
+            previous_frame = frames[i - 1]
+
+            diff = np.sum(np.abs(current_frame.astype(np.float32) - previous_frame.astype(np.float32)))
+            num_pixels = current_frame.shape[0] * current_frame.shape[1] * current_frame.shape[2]
+            normalized_diff = diff / num_pixels
+            differences.append(normalized_diff)
+
+        avg_difference = np.mean(differences)
+        print(f"{Fore.GREEN}Average pixel-by-pixel frame difference for {video_path}: {avg_difference:.2f}{Style.RESET_ALL}")
+        return avg_difference
+
+    else:
+        print(f"{Fore.RED}Invalid method selected. Use 'ssim' or 'pixel'.{Style.RESET_ALL}")
+        return
+
 
 
 def generate_video_similarity_report(video1_path, video2_path, find_intersection=False):
