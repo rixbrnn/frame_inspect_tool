@@ -168,6 +168,43 @@ def measure_video_stability(video_path, method='ssim'):
         return
 
 
+def get_video_similarity(video1_path, video2_path, find_intersection=False):
+    """
+    Compare two videos and return the average SSIM similarity score.
+    If find_intersection is True, only compare the overlapping section.
+
+    Parameters:
+    - video1_path: Path to the first video.
+    - video2_path: Path to the second video.
+    - find_intersection: If True, only compare the overlapping section.
+
+    Returns:
+    - average_ssim: The average SSIM similarity score between the two videos.
+    """
+    video1_frames = get_video_frames_with_imageio(video1_path)
+    video2_frames = get_video_frames_with_imageio(video2_path)
+
+    if find_intersection:
+        best_start1, best_end1, best_start2, best_end2 = find_video_overlap(video1_frames, video2_frames)
+        if best_start1 is None:
+            print(f"{Fore.RED}No overlap found between videos.{Style.RESET_ALL}")
+            return None
+        video1_frames = video1_frames[best_start1:best_end1 + 1]
+        video2_frames = video2_frames[best_start2:best_end2 + 1]
+
+    ssim_scores = []
+    
+    print(f"{Fore.CYAN}Comparing videos using SSIM...{Style.RESET_ALL}")
+    
+    for i in tqdm(range(len(video1_frames)), desc="Comparing frames", unit="frame", dynamic_ncols=True):
+        frame1_gray = cv2.cvtColor(video1_frames[i], cv2.COLOR_BGR2GRAY)
+        frame2_gray = cv2.cvtColor(video2_frames[i], cv2.COLOR_BGR2GRAY)
+        score, _ = ssim(frame1_gray, frame2_gray, full=True)
+        ssim_scores.append(score)
+
+    average_ssim = np.mean(ssim_scores) * 100  # Convert to percentage
+    return average_ssim
+
 def generate_video_similarity_report(video1_path, video2_path, find_intersection=False):
     """
     Generate a video similarity report based on SSIM scores between two videos.
