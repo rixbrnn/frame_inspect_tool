@@ -7,6 +7,7 @@ from tqdm import tqdm
 import argparse
 from colorama import Fore, Style, init
 from skimage.metrics import structural_similarity as ssim
+from skimage.metrics import peak_signal_noise_ratio as psnr
 import imageio
 
 init(autoreset=True)
@@ -107,12 +108,12 @@ def find_video_overlap(video1_frames, video2_frames, hash_size=16, min_match_len
 
 def measure_video_stability(video_path, method='ssim'):
     """
-    Measure the stability of a video using either SSIM or pixel-by-pixel comparison between consecutive frames.
+    Measure the stability of a video using SSIM, PSNR, or pixel-by-pixel comparison between consecutive frames.
     If a directory is provided, it processes all video files in the directory.
 
     Parameters:
     - video_path: Path to a single video file or a directory of video files.
-    - method: The method used to measure stability ('ssim' for structural similarity, 'pixel' for pixel-by-pixel comparison).
+    - method: The method used to measure stability ('ssim' for structural similarity, 'psnr' for PSNR, 'pixel' for pixel-by-pixel comparison).
     """
     if os.path.isdir(video_path):
         # If it's a directory, loop through all video files and measure stability
@@ -128,16 +129,16 @@ def measure_video_stability(video_path, method='ssim'):
     # If it's a single file, measure the stability based on the chosen method
     print(f"{Fore.CYAN}Measuring stability for: {video_path} using {method.upper()}{Style.RESET_ALL}")
     frames = get_video_frames_with_imageio(video_path)
-    
+
     if len(frames) < 2:
         print(f"{Fore.RED}Not enough frames to compare in video: {video_path}{Style.RESET_ALL}")
         return
-    
+
     if method == 'ssim':
         # SSIM-based stability measurement
         ssim_scores = []
         print(f"{Fore.CYAN}Comparing frames using SSIM for stability in: {video_path}{Style.RESET_ALL}")
-        
+
         for i in tqdm(range(1, len(frames)), desc="Comparing frames", unit="frame"):
             frame1_gray = cv2.cvtColor(frames[i-1], cv2.COLOR_BGR2GRAY)
             frame2_gray = cv2.cvtColor(frames[i], cv2.COLOR_BGR2GRAY)
@@ -146,11 +147,25 @@ def measure_video_stability(video_path, method='ssim'):
         average_ssim = np.mean(ssim_scores) * 100  # Convert to percentage
         print(f"{Fore.GREEN}Average SSIM for video stability in {video_path}: {average_ssim:.2f}%{Style.RESET_ALL}")
         return average_ssim
+    elif method == 'psnr':
+        # PSNR-based stability measurement
+        psnr_scores = []
+        print(f"{Fore.CYAN}Comparing frames using PSNR for stability in: {video_path}{Style.RESET_ALL}")
+
+        for i in tqdm(range(1, len(frames)), desc="Comparing frames", unit="frame"):
+            # PSNR works on full color images
+            frame1 = frames[i-1]
+            frame2 = frames[i]
+            psnr_value = psnr(frame1, frame2)
+            psnr_scores.append(psnr_value)
+        average_psnr = np.mean(psnr_scores)
+        print(f"{Fore.GREEN}Average PSNR for video stability in {video_path}: {average_psnr:.2f} dB{Style.RESET_ALL}")
+        return average_psnr
     elif method == 'pixel':
         # Pixel-by-pixel stability measurement
         differences = []
         print(f"{Fore.CYAN}Comparing frames using pixel-by-pixel method for stability in: {video_path}{Style.RESET_ALL}")
-        
+
         for i in tqdm(range(1, len(frames)), desc="Comparing frames", unit="frame"):
             current_frame = frames[i]
             previous_frame = frames[i - 1]
@@ -158,35 +173,93 @@ def measure_video_stability(video_path, method='ssim'):
             num_pixels = current_frame.shape[0] * current_frame.shape[1] * current_frame.shape[2]
             normalized_diff = diff / num_pixels
             differences.append(normalized_diff)
-        
+
         avg_difference = np.mean(differences)
         avg_difference_percentage = (1 - avg_difference) * 100  # Convert to percentage
         print(f"{Fore.GREEN}Average pixel-by-pixel frame difference for {video_path}: {avg_difference_percentage:.2f}%{Style.RESET_ALL}")
         return avg_difference_percentage
     else:
-        print(f"{Fore.RED}Invalid method selected. Use 'ssim' or 'pixel'.{Style.RESET_ALL}")
+        print(f"{Fore.RED}Invalid method selected. Use 'ssim', 'psnr', or 'pixel'.{Style.RESET_ALL}")
         return
 
 
-def generate_video_similarity_report(video1_path, video2_path, find_intersection=False):
+def get_video_similarity(video1_path, video2_path, find_intersection=False, metric='ssim'):
     """
-    Generate a video similarity report based on SSIM scores between two videos.
+    Calculate similarity between two videos using SSIM or PSNR.
+
+    Parameters:
+    - video1_path: Path to the first video.
+    - video2_path: Path to the second video.
+    - find_intersection: If True, automatically find overlapping section using perceptual hashing.
+    - metric: Metric to use ('ssim' or 'psnr').
+
+    Returns:
+    - Average similarity score (SSIM as percentage or PSNR in dB).
+    """
+    print(f"{Fore.CYAN}Loading videos...{Style.RESET_ALL}")
+    video1_frames = get_video_frames_with_imageio(video1_path)
+    video2_frames = get_video_frames_with_imageio(video2_path)
+
+    if find_intersection:
+        print(f"{Fore.CYAN}Finding overlap between videos...{Style.RESET_ALL}")
+        start1, end1, start2, end2 = find_video_overlap(video1_frames, video2_frames)
+
+        if start1 is None:
+            print(f"{Fore.RED}No overlap found between videos.{Style.RESET_ALL}")
+            return None
+
+        print(f"{Fore.GREEN}Overlap found: Video1[{start1}:{end1}] <-> Video2[{start2}:{end2}]{Style.RESET_ALL}")
+        video1_frames = video1_frames[start1:end1+1]
+        video2_frames = video2_frames[start2:end2+1]
+
+    # Ensure both videos have the same number of frames
+    min_frames = min(len(video1_frames), len(video2_frames))
+    video1_frames = video1_frames[:min_frames]
+    video2_frames = video2_frames[:min_frames]
+
+    scores = []
+    print(f"{Fore.CYAN}Comparing frames using {metric.upper()}...{Style.RESET_ALL}")
+
+    for i in tqdm(range(len(video1_frames)), desc=f"Computing {metric.upper()}", unit="frame"):
+        if metric == 'ssim':
+            frame1_gray = cv2.cvtColor(video1_frames[i], cv2.COLOR_BGR2GRAY)
+            frame2_gray = cv2.cvtColor(video2_frames[i], cv2.COLOR_BGR2GRAY)
+            score, _ = ssim(frame1_gray, frame2_gray, full=True)
+            scores.append(score * 100)  # Convert to percentage
+        elif metric == 'psnr':
+            psnr_value = psnr(video1_frames[i], video2_frames[i])
+            scores.append(psnr_value)
+
+    average_score = np.mean(scores)
+    return average_score
+
+
+def generate_video_similarity_report(video1_path, video2_path, find_intersection=False, include_psnr=False):
+    """
+    Generate a video similarity report based on SSIM and optionally PSNR between two videos.
     Optionally, only compare the overlapping section if find_intersection is True.
 
     Parameters:
     - video1_path: Path to the first video.
     - video2_path: Path to the second video.
     - find_intersection: If True, only compare the overlapping section.
+    - include_psnr: If True, also calculate and display PSNR.
 
     Returns:
     - None: Prints the similarity report.
     """
-    average_ssim = get_video_similarity(video1_path, video2_path, find_intersection)
+    average_ssim = get_video_similarity(video1_path, video2_path, find_intersection, metric='ssim')
 
     if average_ssim is None:
         return
 
     print("\n" + Fore.CYAN + "Video Similarity Report" + Style.RESET_ALL)
     print(f"Average SSIM Similarity Score: {Fore.GREEN if average_ssim >= 99 else Fore.YELLOW if average_ssim >= 97 else Fore.RED}{average_ssim:.2f}%{Style.RESET_ALL}")
+
+    if include_psnr:
+        average_psnr = get_video_similarity(video1_path, video2_path, find_intersection, metric='psnr')
+        if average_psnr is not None:
+            psnr_color = Fore.GREEN if average_psnr >= 40 else Fore.YELLOW if average_psnr >= 30 else Fore.RED
+            print(f"Average PSNR: {psnr_color}{average_psnr:.2f} dB{Style.RESET_ALL}")
 
 
