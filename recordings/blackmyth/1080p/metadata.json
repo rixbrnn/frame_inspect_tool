@@ -1,0 +1,25 @@
+{
+  "game": "blackmyth",
+  "resolution": "1080p",
+  "recording_date": "2026-03-19",
+  "system": {
+    "gpu": "RTX 4090",
+    "cpu": "AMD Ryzen 9 7950X",
+    "ram": "32GB DDR5-6000",
+    "driver": "566.03",
+    "note": "UPDATE WITH YOUR SYSTEM SPECS"
+  },
+  "game_settings": {
+    "preset": "Ultra",
+    "ray_tracing": "Ultra",
+    "dlss_frame_generation": false,
+    "note": "UPDATE WITH YOUR GAME SETTINGS"
+  },
+  "benchmark": {
+    "name": "Describe benchmark scene/location",
+    "duration": 60,
+    "validated": false,
+    "ssim": null,
+    "note": "Fill after validation"
+  }
+}

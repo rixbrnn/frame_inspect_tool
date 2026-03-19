@@ -1,0 +1,14 @@
+{
+  "game": "blackmyth",
+  "roi": {
+    "x": 50,
+    "y": 50,
+    "width": 120,
+    "height": 40,
+    "note": "RUN calibrate_fps_roi.py TO SET CORRECT VALUES"
+  },
+  "notes": "MSI Afterburner FPS counter location",
+  "tested_resolutions": [
+    "1080p"
+  ]
+}

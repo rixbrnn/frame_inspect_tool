@@ -40,17 +40,39 @@ pip install -r requirements.txt
 pip install easyocr  # For FPS extraction
 ```
 
-### Workflow
+### Complete Workflow
 
-#### Phase 0: Validate Benchmark Stability
+#### Step 0: Set Up Recording Directory
+
+```bash
+# Create organized structure for your game and resolution
+python scripts/setup_recording.py --game cyberpunk2077 --resolution 1080p
+```
+
+This creates:
+```
+recordings/cyberpunk2077/
+├── 1080p/
+│   ├── validation/    # Phase 0: Benchmark stability check
+│   ├── raw/           # Phase 1: Original recordings
+│   ├── processed/     # Phase 2: CFR 60 FPS versions
+│   ├── extracted/     # Phase 3: OCR FPS data
+│   ├── results/       # Phase 4: Analysis results
+│   └── metadata.json  # Recording info (UPDATE THIS!)
+└── fps_roi.json       # FPS counter location (calibrate once)
+```
+
+#### Step 1: Validate Benchmark Stability
 
 **Before collecting any DLSS data**, validate that your benchmark is deterministic:
 
 ```bash
+# Record the same benchmark twice, then validate
 python scripts/validate_benchmark.py \
-    --video1 DLAA_run1.mp4 \
-    --video2 DLAA_run2.mp4 \
-    --game "Cyberpunk 2077"
+    --video1 recordings/cyberpunk2077/1080p/validation/run1.mp4 \
+    --video2 recordings/cyberpunk2077/1080p/validation/run2.mp4 \
+    --game "Cyberpunk 2077" \
+    --output recordings/cyberpunk2077/1080p/validation/validation.json
 ```
 
 **What this does:**
@@ -62,17 +84,47 @@ python scripts/validate_benchmark.py \
 
 If SSIM < 99%, the benchmark contains non-deterministic elements (random AI, physics, etc.) and should NOT be used for DLSS comparison.
 
-#### Phase 1: Setup FPS Extraction
+#### Step 2: Calibrate FPS Counter ROI
+
+Once per game (ROI is shared across resolutions):
 
 ```bash
-# Calibrate FPS counter region (one-time setup per game)
-python scripts/calibrate_fps_roi.py --video your_video.mp4
-
-# Test OCR
-python scripts/test_ocr.py
+python scripts/calibrate_fps_roi.py \
+    --video recordings/cyberpunk2077/1080p/validation/run1.mp4 \
+    --output recordings/cyberpunk2077/fps_roi.json
 ```
 
-#### Phase 2: Run Analysis
+#### Step 3: Record All DLSS Modes
+
+Record each mode, save to `recordings/<game>/<resolution>/raw/`:
+- DLAA.mp4
+- Quality.mp4
+- Balanced.mp4
+- Performance.mp4
+- UltraPerformance.mp4
+
+#### Step 4: Convert to CFR
+
+```bash
+for mode in DLAA Quality Balanced Performance UltraPerformance; do
+    python scripts/convert_to_cfr.py \
+        recordings/cyberpunk2077/1080p/raw/${mode}.mp4 \
+        --output recordings/cyberpunk2077/1080p/processed/${mode}_60fps.mp4
+done
+```
+
+#### Step 5: Extract FPS Data
+
+```bash
+# Extract FPS from each recording using OCR
+python scripts/extract_fps.py \
+    --video recordings/cyberpunk2077/1080p/processed/DLAA_60fps.mp4 \
+    --roi recordings/cyberpunk2077/fps_roi.json \
+    --output recordings/cyberpunk2077/1080p/extracted/DLAA_fps.json
+# Repeat for other modes...
+```
+
+#### Step 6: Run Full Analysis
 
 ```bash
 # Calibrate FPS counter region
