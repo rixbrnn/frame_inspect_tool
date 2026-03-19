@@ -1,115 +1,148 @@
-# frame_inspect_tool
-A tool to compare graphics rendered with upscaling or frame generation to their source using SSIM and PSNR metrics.
+# Frame Inspect Tool - DLSS Analysis Toolkit
 
-## Features
+Complete Python toolkit for analyzing DLSS (Deep Learning Super Sampling) quality and performance trade-offs.
 
-- **Image Quality Metrics**: SSIM (Structural Similarity Index) and PSNR (Peak Signal-to-Noise Ratio)
-- **Automatic Frame Alignment**: Uses perceptual hashing to automatically find overlapping sections in videos
-- **Temporal Stability Analysis**: Measure frame-to-frame consistency using SSIM or PSNR
-- **Batch Processing**: Compare a source image against a directory of images
-- **Video Comparison**: Frame-by-frame comparison of two videos with automatic synchronization
+## 🚀 Quick Start
 
-## Metrics Explained
+After recording your benchmark videos with all DLSS modes:
 
-### SSIM (Structural Similarity Index)
-- Measures structural similarity between images based on luminance, contrast, and structure
-- Range: 0-100% (higher is better)
-- More aligned with human perception than pixel-wise metrics
-- Interpretation:
-  - ≥99%: Excellent (virtually identical)
-  - 97-99%: Good (minor differences)
-  - <97%: Significant differences
-
-### PSNR (Peak Signal-to-Noise Ratio)
-- Measures signal quality in decibels (dB)
-- Higher values indicate better quality
-- Interpretation:
-  - ≥40 dB: Excellent quality
-  - 30-40 dB: Good quality
-  - 20-30 dB: Acceptable quality
-  - <20 dB: Poor quality
-
-# Setup
-
-Install python and then install the dependencies with
-
-`pip install -r requirements.txt`
-
-# Usage
-
-## Image Comparison
-
-Compare two images using SSIM:
 ```bash
-python src/app.py -s source_image.png -m modified_image.png
+cd /Users/i549847/workspace/frame_inspect_tool
+python pipeline.py
 ```
 
-Compare two images using both SSIM and PSNR:
-```bash
-python src/app.py -s source_image.png -m modified_image.png --psnr
+That's it! The pipeline will automatically:
+1. ✅ Convert videos to CFR (Constant Frame Rate)
+2. ✅ Extract FPS data from FrameView CSVs
+3. ✅ Compare image quality (SSIM/PSNR)
+4. ✅ Consolidate all data into CSVs
+5. ✅ Generate trade-off analysis and charts
+
+## 📋 Prerequisites
+
+### Required Files
+
+Place your recordings in `../tcc/recordings/`:
+
+```
+../tcc/recordings/
+├── raw/
+│   ├── DLAA_4K_raw.mp4
+│   ├── Quality_raw.mp4
+│   ├── Balanced_raw.mp4
+│   ├── Performance_raw.mp4
+│   └── Ultra_Performance_raw.mp4
+└── frameview/
+    ├── DLAA_4K_frameview.csv
+    ├── Quality_frameview.csv
+    ├── Balanced_frameview.csv
+    ├── Performance_frameview.csv
+    └── Ultra_Performance_frameview.csv
 ```
 
-Compare source image against all images in a directory:
+### Required Software
+
+- Python 3.8+
+- FFmpeg (for video processing)
+- Python packages: see `requirements.txt`
+
 ```bash
-python src/app.py -s source_image.png -d ./images_directory/
+# Install dependencies
+pip install -r requirements.txt
+
+# Install FFmpeg (if not installed)
+# macOS:
+brew install ffmpeg
+
+# Ubuntu/Debian:
+sudo apt install ffmpeg
+
+# Windows:
+# Download from https://ffmpeg.org/
 ```
 
-Include PSNR in directory comparison:
+## 🛠️ Tools
+
+### 1. **pipeline.py** - Full Automation ⭐ RECOMMENDED
+
+Complete end-to-end analysis pipeline.
+
+**Basic usage:**
 ```bash
-python src/app.py -s source_image.png -d ./images_directory/ --psnr
+python pipeline.py
 ```
 
-## Video Comparison
-
-Compare two videos (manual frame alignment):
+**Advanced usage:**
 ```bash
-python src/app.py -v1 video1.mp4 -v2 video2.mp4
+# Skip already completed steps
+python pipeline.py --skip-processing  # Skip CFR conversion
+python pipeline.py --skip-fps         # Skip FPS extraction
+python pipeline.py --skip-quality     # Skip quality comparison
+
+# Process specific modes only
+python pipeline.py --modes DLAA_4K Quality Balanced
+
+# Use different baseline
+python pipeline.py --baseline Quality
 ```
 
-Compare two videos with automatic frame alignment:
+---
+
+### 2. **processar_videos.py** - CFR Conversion Only
+
+Converts videos to Constant Frame Rate (60 FPS, 60 seconds, 3600 frames).
+
+**Usage:**
 ```bash
-python src/app.py -v1 video1.mp4 -v2 video2.mp4 --find-intersection
+python processar_videos.py
+python processar_videos.py --modes DLAA_4K Quality
+python processar_videos.py --fps 120 --duration 30
 ```
 
-Include PSNR in video comparison:
-```bash
-python src/app.py -v1 video1.mp4 -v2 video2.mp4 --find-intersection --psnr
+---
+
+### 3. **Individual Analysis Tools**
+
+Located in `src/`:
+- `fps_extractor.py` - Extract FPS from FrameView/overlay
+- `performance_quality_analyzer.py` - Analyze trade-offs
+- `video_comparison.py` - Compare SSIM/PSNR
+- `video_sync.py` - Frame alignment (if needed)
+
+See full documentation in each script's docstring.
+
+## 📊 Output Structure
+
+```
+../tcc/
+├── recordings/processed/          # CFR videos (3600 frames each)
+├── fps_data/benchmark_fps.csv     # ⭐ Consolidated FPS data
+├── quality_data/benchmark_quality.csv  # ⭐ Consolidated quality data
+└── results/
+    ├── benchmark_tradeoff.csv     # ⭐ USE IN TCC TABLES
+    └── charts/
+        ├── benchmark_fps_vs_quality.png  # ⭐ TCC FIGURE
+        └── benchmark_efficiency.png      # ⭐ TCC FIGURE
 ```
 
-## Temporal Stability Analysis
+## 🎓 TCC Integration
 
-Measure temporal stability using SSIM:
-```bash
-python src/app.py --stability video.mp4 --method ssim
-```
+See `../tcc/COLETA_DADOS_PROTOCOLO.md` for complete recording protocol.
 
-Measure temporal stability using PSNR:
-```bash
-python src/app.py --stability video.mp4 --method psnr
-```
+## 🐛 Troubleshooting
 
-Measure using pixel-by-pixel difference:
-```bash
-python src/app.py --stability video.mp4 --method pixel
-```
+**"ffmpeg not found"**: Install FFmpeg (`brew install ffmpeg` on macOS)
 
-Analyze all videos in a directory:
-```bash
-python src/app.py --stability ./videos_directory/ --method ssim
-```
+**"Missing raw recordings"**: Check files are in `../tcc/recordings/raw/`
 
-# Important Notes for Accurate Comparisons
+**"Frame count mismatch"**: Verify original video is ~60 seconds
 
-Is very easy to move the mouse around while taking screenshots. This tool requires the screenshot to be at the exact same position as before,
-therefore I recommend only using it on scenes in which you can garantee there was no mouse movement from you. Alternatively, if the game you are testing supports
-graphics preview feature (such as God of War: Ragnarok) while in the menu settings, that ideal for taking screenshots.
-Alternatively, you can take the screenshots disabling the mouse to ensure there wont be any movement.
-You must find a spot that does not have variable visuals, it needs to be a still frame.
-Also, if the game has a "breathing" camera you must disable it or find a situation in which that is not active.
-Otherwise your screenshots might not be a fair comparison.
+## 📚 References
 
-For video comparisons:
-- Use lossless codecs (e.g., FFV1) to avoid compression artifacts
-- Ensure both videos have the same frame rate
-- Use benchmark tools or photo modes to minimize procedural variation
-- The `--find-intersection` flag automatically aligns videos using perceptual hashing
+- Blau & Michaeli (2018): Perception-Distortion Tradeoff
+- Zhang et al. (2018): LPIPS
+- Lai et al. (2018): Video Temporal Consistency
+
+---
+
+**Created for TCC research on DLSS quality assessment**
