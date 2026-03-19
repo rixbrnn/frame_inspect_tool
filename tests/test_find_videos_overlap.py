@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch
-from src import video_comparison
+from src.comparison import video as video_comparison
 
 
 def mock_get_frame_hash(frame):
@@ -9,11 +9,11 @@ def mock_get_frame_hash(frame):
 def mock_compare_hashes(hash1, hash2):
     return hash1 == hash2
 
-@patch('src.video_comparison.compare_hashes', side_effect=mock_compare_hashes)
-@patch('src.video_comparison.get_frame_hash', side_effect=mock_get_frame_hash)
+@patch('src.comparison.video.compare_hashes', side_effect=mock_compare_hashes)
+@patch('src.comparison.video.get_frame_hash', side_effect=mock_get_frame_hash)
 def test_find_video_overlap_with_existing_overlap(mock_get_frame_hash, mock_compare_hashes):
 
-    
+
     video1_frames = ["frame1", "frame2", "frame3", "frame4", "frame5"]
     video2_frames = ["frameA", "frameB", "frame2", "frame3", "frame4", "frameC"]
 
@@ -25,10 +25,10 @@ def test_find_video_overlap_with_existing_overlap(mock_get_frame_hash, mock_comp
     assert end2 == 4    # Expected end index in video 2
 
 
-@patch('src.video_comparison.compare_hashes', side_effect=mock_compare_hashes)
-@patch('src.video_comparison.get_frame_hash', side_effect=mock_get_frame_hash)
+@patch('src.comparison.video.compare_hashes', side_effect=mock_compare_hashes)
+@patch('src.comparison.video.get_frame_hash', side_effect=mock_get_frame_hash)
 def test_find_video_overlap_no_overlap(mock_get_frame_hash, mock_compare_hashes):
-    
+
     video1_frames = ["frame1", "frame2", "frame3"]
     video2_frames = ["frameA", "frameB", "frameC"]
 
@@ -37,7 +37,7 @@ def test_find_video_overlap_no_overlap(mock_get_frame_hash, mock_compare_hashes)
     assert start1 is None
     assert end1 is None
     assert start2 is None
-    assert end2 is None    
+    assert end2 is None
 
 if __name__ == "__main__":
     pytest.main()

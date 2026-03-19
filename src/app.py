@@ -7,8 +7,8 @@ from tqdm import tqdm
 import argparse
 from colorama import Fore, Style, init
 from skimage.metrics import structural_similarity as ssim
-from image_comparison import get_images_similarity, get_images_similarity_in_directory, get_images_psnr, get_images_similarity_and_psnr
-from video_comparison import generate_video_similarity_report, measure_video_stability
+from src.comparison.image import get_images_similarity, get_images_similarity_in_directory, get_images_psnr, get_images_similarity_and_psnr
+from src.comparison.video import generate_video_similarity_report, measure_video_stability
 
 init(autoreset=True)
 

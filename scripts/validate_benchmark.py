@@ -16,7 +16,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from src.video_comparison import get_video_similarity
+from src.comparison.video import get_video_similarity
 
 
 # Thresholds from methodology (lines 85-90)
