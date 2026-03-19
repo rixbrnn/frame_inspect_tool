@@ -17,6 +17,7 @@ import json
 import sys
 from pathlib import Path
 from src.comparison.video import get_video_similarity
+from src.preprocessing.video import ensure_cfr
 
 
 # Thresholds from methodology (lines 85-90)
@@ -29,7 +30,10 @@ def validate_benchmark(video1: Path, video2: Path, game_name: str, output: Path 
     """
     Validate if benchmark is stable enough for DLSS comparison
 
-    Uses existing get_video_similarity() function from video_comparison.py
+    Process:
+    1. Convert both videos to CFR 60 FPS
+    2. Synchronize using perceptual hashing
+    3. Compare aligned sections with SSIM
     """
     print("=" * 80)
     print("BENCHMARK STABILITY VALIDATION".center(80))
@@ -38,12 +42,25 @@ def validate_benchmark(video1: Path, video2: Path, game_name: str, output: Path 
     print(f"Comparing: {video1.name} vs {video2.name}")
     print()
 
-    # Use existing comparison code!
-    print("Running comparison (using existing tools)...")
+    # Step 1: Ensure both videos are CFR @ 60 FPS
+    print("[Step 1/3] Converting to CFR 60 FPS...")
+    print("-" * 80)
+    try:
+        video1_cfr = ensure_cfr(video1, target_fps=60)
+        video2_cfr = ensure_cfr(video2, target_fps=60)
+    except Exception as e:
+        print(f"\n✗ CFR conversion failed: {e}")
+        return False
+    print()
+
+    # Step 2 & 3: Synchronize and compare
+    print("[Step 2/3] Synchronizing videos using perceptual hashing...")
+    print("[Step 3/3] Computing SSIM on aligned section...")
+    print("-" * 80)
     avg_ssim = get_video_similarity(
-        str(video1),
-        str(video2),
-        find_intersection=False,  # Should be identical, no need to sync
+        str(video1_cfr),
+        str(video2_cfr),
+        find_intersection=True,  # Use hash sync to find overlap
         metric='ssim'
     )
 
@@ -58,6 +75,14 @@ def validate_benchmark(video1: Path, video2: Path, game_name: str, output: Path 
 
     print(f"\nAverage SSIM: {avg_ssim:.2f}%")
     print(f"Threshold:    {SSIM_THRESHOLD:.2f}%")
+
+    # Note about CFR files
+    if video1_cfr != video1 or video2_cfr != video2:
+        print(f"\nNote: CFR versions created for analysis:")
+        if video1_cfr != video1:
+            print(f"  • {video1_cfr.name}")
+        if video2_cfr != video2:
+            print(f"  • {video2_cfr.name}")
     print()
 
     is_stable = avg_ssim >= SSIM_THRESHOLD
