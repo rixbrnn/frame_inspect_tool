@@ -7,3 +7,5 @@ tqdm
 imagehash
 pillow
 imageio-ffmpeg
+easyocr
+pytesseract
