@@ -59,10 +59,24 @@ def create_recording_structure(game: str, resolution: str, base_dir: Path = None
                 "driver": "566.03",
                 "note": "UPDATE WITH YOUR SYSTEM SPECS"
             },
+            "display_settings": {
+                "hdr": False,
+                "color_space": "sRGB (BT.709)",
+                "note": "HDR MUST BE DISABLED - See methodology for justification"
+            },
+            "capture_settings": {
+                "software": "NVIDIA ShadowPlay / GeForce Experience",
+                "codec": "H.264",
+                "quality": "High Quality (50+ Mbps)",
+                "frame_rate": 60,
+                "note": "H.264 recommended for compatibility and performance. HEVC acceptable if storage limited. Never use AV1."
+            },
             "game_settings": {
                 "preset": "Ultra",
                 "ray_tracing": "Ultra",
                 "dlss_frame_generation": False,
+                "vsync": False,
+                "fps_limit": 60,
                 "note": "UPDATE WITH YOUR GAME SETTINGS"
             },
             "benchmark": {

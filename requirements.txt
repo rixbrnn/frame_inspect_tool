@@ -9,3 +9,4 @@ pillow
 imageio-ffmpeg
 easyocr
 pytesseract
+huggingface-hub

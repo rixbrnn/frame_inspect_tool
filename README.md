@@ -2,6 +2,26 @@
 
 A comprehensive toolkit for analyzing DLSS quality vs performance trade-offs through automated video comparison, FPS extraction via OCR, and temporal correlation analysis.
 
+## 📊 Public Dataset Available
+
+Pre-recorded benchmark data is available on Hugging Face:
+
+**🤗 Dataset:** https://huggingface.co/datasets/rixbrnn/frame_inspect_tool_data
+
+**📦 Tool Repository:** https://github.com/rixbrnn/frame_inspect_tool
+
+Download the dataset to reproduce results or analyze existing recordings:
+```bash
+# Download all data
+python scripts/download_dataset.py
+
+# Download specific game
+python scripts/download_dataset.py --game cyberpunk2077 --resolution 1080p
+
+# List available recordings
+python scripts/download_dataset.py --list
+```
+
 ## 📁 Project Structure
 
 ```
