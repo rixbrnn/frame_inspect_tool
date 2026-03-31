@@ -1,12 +1,13 @@
 """
 Advanced video quality metrics for perceptual and temporal analysis.
 
-Metrics:
+Frame-by-frame metrics:
 - LPIPS: Learned perceptual similarity (deep learning)
 - FLIP: Visual error with perceptual weighting
 - Temporal Optical Flow: Motion consistency for ghosting detection
 
-Note: VMAF requires video-level processing and is omitted for frame-by-frame comparison.
+Video-level metrics (see vmaf_metrics.py):
+- VMAF: Netflix's perceptual video quality metric with motion compensation
 """
 
 import numpy as np
