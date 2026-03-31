@@ -20,8 +20,8 @@ import os
 # Add project root to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.comparison.advanced_metrics import AdvancedMetrics, compute_all_metrics, LPIPS_AVAILABLE
-from src.comparison.vmaf_metrics import VMAFMetrics, interpret_vmaf_score
+from src.metrics.frame.perceptual import AdvancedMetrics, compute_all_metrics, LPIPS_AVAILABLE
+from src.metrics.video.vmaf import VMAFMetrics, interpret_vmaf_score
 
 # Check for torch availability (for GPU detection)
 try:
