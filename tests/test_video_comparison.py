@@ -1,1 +1,0 @@
-from src import video_comparison
