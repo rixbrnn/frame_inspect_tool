@@ -10,3 +10,8 @@ imageio-ffmpeg
 easyocr
 pytesseract
 huggingface-hub
+
+# Advanced metrics for DLSS evaluation
+torch>=2.0.0              # For LPIPS
+torchvision>=0.15.0       # For LPIPS pretrained models
+lpips>=0.1.4              # Perceptual similarity metric
