@@ -16,7 +16,7 @@ ICAT JSON Structure:
   - timestamps[]: Frame timestamps
 
 Usage:
-    from src.sync.icat_parser import parse_icat_alignment
+    from src.trim.legacy.icat_parser import parse_icat_alignment
 
     alignment = parse_icat_alignment('recordings/cyberpunk/icat_1080p_derived_modes_cut_settings.json')
     print(alignment)

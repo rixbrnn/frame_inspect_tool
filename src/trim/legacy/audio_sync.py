@@ -385,7 +385,7 @@ def compare_alignments(
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parent.parent.parent))
-    from src.sync.icat_parser import parse_icat_alignment
+    from src.trim.legacy.icat_parser import parse_icat_alignment
 
     print("\n" + "=" * 80)
     print("ALIGNMENT COMPARISON: AUDIO vs ICAT".center(80))

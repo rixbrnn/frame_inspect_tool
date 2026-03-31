@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
-from src.sync.icat_parser import parse_icat_alignment
+from src.trim.legacy.icat_parser import parse_icat_alignment
 
 
 def compare_sync_methods(icat_json_path: str):
