@@ -173,3 +173,5 @@ recordings/**/*.h265
 !recordings/**/*.json
 !recordings/**/*.md
 !recordings/**/.gitkeep
+
+.DS_Store
