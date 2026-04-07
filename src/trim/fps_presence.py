@@ -24,7 +24,8 @@ from typing import Optional, Tuple
 import subprocess
 
 # Import FPS OCR extractor
-sys.path.insert(0, str(Path(__file__).parent.parent))
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 from src.extraction.fps_ocr import FPSOCRExtractor
 
 
