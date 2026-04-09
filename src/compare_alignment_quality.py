@@ -162,12 +162,16 @@ def export_per_frame_to_csv(per_frame_data: dict, output_path: str):
 
     # Determine columns from first frame
     fieldnames = ['frame_index', 'timestamp']
-    first_frame = frames[0]
 
-    # Standard columns
+    # Collect all possible columns from all frames (not just first frame)
+    all_cols = set()
+    for frame in frames:
+        all_cols.update(frame.keys())
+
+    # Add standard columns in preferred order if they exist
     for col in ['fps', 'fps_interpolated', 'ssim', 'mse', 'psnr',
                 'lpips', 'flip', 'optical_flow']:
-        if col in first_frame:
+        if col in all_cols and col not in fieldnames:
             fieldnames.append(col)
 
     # Write CSV

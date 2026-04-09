@@ -205,17 +205,24 @@ class FPSOCRExtractor:
         Returns:
             FPS value or None if OCR failed
         """
-        # Preprocess
-        processed = self.preprocess_roi(roi_img)
+        # For colored text (like cyan FPS overlays), use original or simple grayscale
+        # Heavy preprocessing can distort colored text
+        if len(roi_img.shape) == 3:
+            # Try with original RGB first (EasyOCR handles color well)
+            img_for_ocr = roi_img
+        else:
+            img_for_ocr = roi_img
 
         # Run OCR
         if self.use_easyocr:
             try:
-                results = self.reader.readtext(processed, detail=0)
+                results = self.reader.readtext(img_for_ocr, detail=0)
                 text = ' '.join(results) if results else ''
             except Exception as e:
                 return None
         else:
+            # For Tesseract, use preprocessed image
+            processed = self.preprocess_roi(roi_img)
             import pytesseract
             # Configure tesseract for digits
             custom_config = r'--oem 3 --psm 7 -c tessedit_char_whitelist=0123456789FPSfps.:, '
