@@ -31,16 +31,25 @@ frame_inspect_tool/
 │   ├── calibrate_fps_roi.py          # Setup: Calibrate FPS counter region
 │   ├── convert_to_cfr.py             # Preprocessing: Convert to CFR
 │   ├── test_ocr.py                   # Setup: Test OCR installation
-│   ├── pipeline.py                   # Main: Full automation pipeline
+│   ├── download_dataset.py           # Download from HuggingFace
+│   ├── upload_one_by_one.py          # Upload to HuggingFace
 │   └── utils/                        # Utility scripts
 │
 ├── src/                       # Core library
+│   ├── run_analysis.py        # Generic analysis runner (config-driven)
+│   ├── compare_alignment_quality.py  # Low-level comparison engine
 │   ├── preprocessing/         # Video preprocessing (CFR conversion)
 │   ├── extraction/            # FPS data extraction
 │   ├── comparison/            # Image/video comparison
 │   ├── sync/                  # Video synchronization
 │   ├── analysis/              # Analysis tools
+│   ├── metrics/               # Quality metrics (SSIM, PSNR, LPIPS, FLIP, VMAF)
+│   ├── trim/                  # Video trimming (OCR-based)
 │   └── validation/            # Benchmark validation
+│
+├── configs/                   # Analysis configuration files (YAML)
+│   ├── analysis_retrimmed.yaml       # Re-trimmed videos
+│   └── analysis_cyberpunk_low.yaml   # Low graphics dataset
 │
 └── tests/                     # Unit tests
 ```
@@ -144,15 +153,49 @@ python scripts/extract_fps.py \
 # Repeat for other modes...
 ```
 
-#### Step 6: Run Full Analysis
+#### Step 6: Run Quality Analysis
+
+The analysis system uses a generic, config-driven approach via YAML files:
 
 ```bash
-# Calibrate FPS counter region
-python scripts/calibrate_fps_roi.py --video your_video.mp4
-
-# Run full pipeline
-python scripts/pipeline.py
+# Run analysis with a configuration file
+python src/run_analysis.py --config configs/analysis_retrimmed.yaml
 ```
+
+**Configuration Format (YAML):**
+```yaml
+paths:
+  base_dir: recordings/cyberpunk/trimmed
+  results_dir: results/cyberpunk/analysis
+
+settings:
+  roi: "top-left 10%"           # FPS counter ROI
+  sample_rate: 10                # Analyze every 10th frame
+  compute_advanced: true         # Enable LPIPS, FLIP, Optical Flow
+  use_gpu: true                  # Use GPU acceleration
+  compute_vmaf: true             # Include VMAF metric
+  extract_fps: true              # Extract FPS from overlay
+
+comparisons:
+  - reference: 1080p_dlaa_run1.mp4
+    compare: 1080p_dlss_quality.mp4
+    name: 1080p_DLAA_vs_Quality
+```
+
+**ROI Specification:**
+- Pixel format: `"10,10,100,50"` (x,y,width,height)
+- Percentage format: `"top-left 10%"` (recommended - resolution independent)
+
+**Output:** Each comparison produces a JSON file with:
+- Frame-by-frame metrics (SSIM, PSNR, LPIPS, FLIP, etc.)
+- Extracted FPS data
+- Execution time
+- Summary statistics
+
+**Creating New Analyses:**
+1. Copy an existing config: `cp configs/analysis_retrimmed.yaml configs/my_analysis.yaml`
+2. Edit paths, settings, and comparisons
+3. Run: `python src/run_analysis.py --config configs/my_analysis.yaml`
 
 ## 🎯 Key Features
 

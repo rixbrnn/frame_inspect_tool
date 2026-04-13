@@ -3,8 +3,8 @@
 Generic video quality analysis runner
 
 Usage:
-    python scripts/run_analysis.py --config configs/analysis_retrimmed.yaml
-    python scripts/run_analysis.py --config configs/analysis_cyberpunk_full.yaml
+    python src/run_analysis.py --config configs/analysis_retrimmed.yaml
+    python src/run_analysis.py --config configs/analysis_cyberpunk_full.yaml
 """
 
 import sys
@@ -234,13 +234,13 @@ def main():
         epilog="""
 Examples:
   # Run analysis for re-trimmed videos
-  python scripts/run_analysis.py --config configs/analysis_retrimmed.yaml
+  python src/run_analysis.py --config configs/analysis_retrimmed.yaml
 
   # Run full cyberpunk analysis
-  python scripts/run_analysis.py --config configs/analysis_cyberpunk_full.yaml
+  python src/run_analysis.py --config configs/analysis_cyberpunk_full.yaml
 
   # Run cyberpunk_low analysis
-  python scripts/run_analysis.py --config configs/analysis_cyberpunk_low.yaml
+  python src/run_analysis.py --config configs/analysis_cyberpunk_low.yaml
 
 Config file format (YAML):
   paths:
