@@ -86,17 +86,20 @@ def parse_roi(roi_str: str, frame_width: int = None, frame_height: int = None) -
     return tuple(map(int, parts))
 
 
-def detect_fps_range(video_path: str, roi: Tuple[int, int, int, int]) -> Optional[Tuple[int, int]]:
+def detect_fps_range(video_path: str, roi: Tuple[int, int, int, int],
+                     window_size: int = 30) -> Optional[Tuple[int, int]]:
     """
-    Detect frame range where FPS counter is visible with frame-perfect precision.
+    Detect frame range where FPS counter is visible using sliding window OCR.
 
-    Scans every frame to find:
-    - First frame where FPS is detected
-    - Last frame where FPS is detected
+    Uses a sliding window approach to batch process frames efficiently:
+    - Loads frames in windows of `window_size` frames
+    - Processes entire window with OCR model (keeps model in memory)
+    - Finds first and last frame where FPS is detected
 
     Args:
         video_path: Path to video file
         roi: (x, y, width, height) for FPS counter location
+        window_size: Number of frames to process in each batch (default: 30)
 
     Returns:
         (first_frame, last_frame) or None if FPS never detected
@@ -110,60 +113,105 @@ def detect_fps_range(video_path: str, roi: Tuple[int, int, int, int]) -> Optiona
 
     print(f"Video: {total_frames} frames @ {fps:.2f} FPS")
     print(f"Scanning for FPS counter in ROI: x={roi[0]}, y={roi[1]}, w={roi[2]}, h={roi[3]}")
+    print(f"Using sliding window size: {window_size} frames")
 
     # Initialize OCR extractor (loaded once, reused for all frames)
     extractor = FPSOCRExtractor(roi=roi, use_easyocr=True)
 
     x, y, w, h = roi
 
-    # Scan forward to find FIRST frame with FPS
-    print("\n[1/2] Scanning forward for first FPS appearance (every frame)...")
+    # Scan forward to find FIRST frame with FPS using sliding window
+    print("\n[1/2] Scanning forward with sliding window (every frame)...")
     first_frame = None
 
     from tqdm import tqdm
 
-    for frame_idx in tqdm(range(total_frames), desc="Scanning forward", unit="frame"):
-        ret, frame = cap.read()
-        if not ret:
-            break
+    frame_idx = 0
+    with tqdm(total=total_frames, desc="Scanning forward", unit="frame") as pbar:
+        while frame_idx < total_frames:
+            # Read window of frames
+            window_frames = []
+            window_indices = []
 
-        # Extract ROI
-        roi_crop = frame[y:y+h, x:x+w]
+            for i in range(window_size):
+                ret, frame = cap.read()
+                if not ret:
+                    break
+                window_frames.append(frame)
+                window_indices.append(frame_idx + i)
 
-        # Try OCR
-        fps_value = extractor.read_fps_from_roi(roi_crop)
+            if not window_frames:
+                break
 
-        if fps_value is not None and fps_value > 0:
-            first_frame = frame_idx
-            print(f"\n  ✓ First FPS detection at frame {first_frame} (t={first_frame/fps:.2f}s): {fps_value:.1f} FPS")
-            break
+            # Process entire window with OCR (model stays in memory)
+            for i, (frame, idx) in enumerate(zip(window_frames, window_indices)):
+                # Extract ROI
+                roi_crop = frame[y:y+h, x:x+w]
+
+                # Try OCR (model already loaded and hot)
+                fps_value = extractor.read_fps_from_roi(roi_crop)
+
+                if fps_value is not None and fps_value > 0:
+                    first_frame = idx
+                    print(f"\n  ✓ First FPS detection at frame {first_frame} (t={first_frame/fps:.2f}s): {fps_value:.1f} FPS")
+                    break
+
+            pbar.update(len(window_frames))
+            frame_idx += len(window_frames)
+
+            if first_frame is not None:
+                break
 
     if first_frame is None:
         print("\n  ✗ FPS counter never detected in video")
         cap.release()
         return None
 
-    # Scan backward to find LAST frame with FPS
-    print(f"\n[2/2] Scanning backward from end for last FPS appearance (every frame)...")
+    # Scan backward to find LAST frame with FPS using sliding window
+    print(f"\n[2/2] Scanning backward with sliding window (every frame)...")
     last_frame = None
 
-    for frame_idx in tqdm(range(total_frames - 1, first_frame - 1, -1),
-                          desc="Scanning backward", unit="frame"):
-        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
-        ret, frame = cap.read()
-        if not ret:
-            continue
+    # Start from end, move backward in windows
+    frame_idx = total_frames - 1
+    with tqdm(total=(total_frames - first_frame), desc="Scanning backward", unit="frame") as pbar:
+        while frame_idx >= first_frame:
+            # Calculate window start (move backward)
+            window_start = max(first_frame, frame_idx - window_size + 1)
+            window_end = frame_idx
 
-        # Extract ROI
-        roi_crop = frame[y:y+h, x:x+w]
+            # Read window of frames backward
+            window_frames = []
+            window_indices = []
 
-        # Try OCR
-        fps_value = extractor.read_fps_from_roi(roi_crop)
+            for idx in range(window_end, window_start - 1, -1):
+                cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+                ret, frame = cap.read()
+                if not ret:
+                    continue
+                window_frames.append(frame)
+                window_indices.append(idx)
 
-        if fps_value is not None and fps_value > 0:
-            last_frame = frame_idx
-            print(f"\n  ✓ Last FPS detection at frame {last_frame} (t={last_frame/fps:.2f}s): {fps_value:.1f} FPS")
-            break
+            if not window_frames:
+                break
+
+            # Process entire window with OCR (model stays in memory)
+            for frame, idx in zip(window_frames, window_indices):
+                # Extract ROI
+                roi_crop = frame[y:y+h, x:x+w]
+
+                # Try OCR (model already loaded and hot)
+                fps_value = extractor.read_fps_from_roi(roi_crop)
+
+                if fps_value is not None and fps_value > 0:
+                    last_frame = idx
+                    print(f"\n  ✓ Last FPS detection at frame {last_frame} (t={last_frame/fps:.2f}s): {fps_value:.1f} FPS")
+                    break
+
+            pbar.update(len(window_frames))
+            frame_idx = window_start - 1
+
+            if last_frame is not None:
+                break
 
     if last_frame is None:
         print(f"  ✗ FPS counter disappeared after frame {first_frame}, using end of video")
