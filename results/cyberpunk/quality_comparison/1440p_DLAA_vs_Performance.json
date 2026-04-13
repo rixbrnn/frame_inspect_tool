@@ -1,5 +1,5 @@
 {
-  "alignment_method": "1440p_DLAA_vs_Performance",
+  "alignment_method": "1440p_DLAA_vs_Performance_retrimmed",
   "video1": "recordings/cyberpunk/trimmed/1440p_dlaa_run1.mp4",
   "video2": "recordings/cyberpunk/trimmed/1440p_dlss_performance.mp4",
   "frames_compared": 393,
@@ -64,8 +64,8 @@
     "fps_roi": {
       "x": 0,
       "y": 0,
-      "width": 288,
-      "height": 162
+      "width": 256,
+      "height": 144
     },
     "frames": [
       {
@@ -4785,9 +4785,15 @@
     ]
   },
   "execution_time": {
-    "start_time": "2026-04-09T12:06:19.800268",
-    "end_time": "2026-04-09T12:26:17.968983",
-    "duration_seconds": 1198.17,
-    "duration_formatted": "19m 58s"
+    "start_time": "2026-04-13T16:59:48.323072",
+    "end_time": "2026-04-13T17:19:36.407616",
+    "duration_seconds": 1188.08,
+    "frames_analyzed": 0
+  },
+  "config": {
+    "roi": "top-left 10%",
+    "sample_rate": 10,
+    "compute_advanced": true,
+    "compute_vmaf": true
   }
 }

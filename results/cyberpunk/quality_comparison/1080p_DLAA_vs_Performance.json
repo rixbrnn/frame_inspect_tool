@@ -1,5 +1,5 @@
 {
-  "alignment_method": "1080p_DLAA_vs_Performance",
+  "alignment_method": "1080p_DLAA_vs_Performance_retrimmed",
   "video1": "recordings/cyberpunk/trimmed/1080p_dlaa_run1.mp4",
   "video2": "recordings/cyberpunk/trimmed/1080p_dlss_performance.mp4",
   "frames_compared": 392,
@@ -64,8 +64,8 @@
     "fps_roi": {
       "x": 0,
       "y": 0,
-      "width": 288,
-      "height": 162
+      "width": 192,
+      "height": 108
     },
     "frames": [
       {
@@ -625,7 +625,7 @@
         "mse": 51.53154095936214,
         "psnr": 31.010072314062214,
         "fps": 195.0,
-        "fps_interpolated": true,
+        "fps_interpolated": false,
         "lpips": 0.12481821328401566,
         "flip": 2.7621275197723767,
         "optical_flow": 2.3228645029578274
@@ -637,7 +637,7 @@
         "mse": 39.674737815072014,
         "psnr": 32.14566295405579,
         "fps": 195.0,
-        "fps_interpolated": false,
+        "fps_interpolated": true,
         "lpips": 0.11531709134578705,
         "flip": 2.3274995780285495,
         "optical_flow": 3.935638261959866
@@ -4773,9 +4773,15 @@
     ]
   },
   "execution_time": {
-    "start_time": "2026-04-09T10:43:05.202497",
-    "end_time": "2026-04-09T10:56:30.728611",
-    "duration_seconds": 805.53,
-    "duration_formatted": "13m 25s"
+    "start_time": "2026-04-13T16:47:18.774232",
+    "end_time": "2026-04-13T16:59:48.297478",
+    "duration_seconds": 749.52,
+    "frames_analyzed": 0
+  },
+  "config": {
+    "roi": "top-left 10%",
+    "sample_rate": 10,
+    "compute_advanced": true,
+    "compute_vmaf": true
   }
 }

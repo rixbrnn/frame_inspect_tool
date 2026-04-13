@@ -2,10 +2,10 @@
   "batch_execution": {
     "start_time": "2026-04-09T10:15:31.834561",
     "end_time": "2026-04-09T17:07:35.619391",
-    "total_duration_seconds": 24723.78,
-    "total_duration_formatted": "6h 52m 3s",
-    "average_comparison_time_seconds": 1648.23,
-    "min_comparison_time_seconds": 786.13,
+    "total_duration_seconds": 24421.84,
+    "total_duration_formatted": "6h 47m 1s",
+    "average_comparison_time_seconds": 1628.12,
+    "min_comparison_time_seconds": 749.52,
     "max_comparison_time_seconds": 2967.93,
     "total_comparisons": 15,
     "successful_comparisons": 15,
@@ -13,20 +13,20 @@
     "resolution_statistics": {
       "1080p": {
         "count": 5,
-        "average_seconds": 821.59,
-        "min_seconds": 786.13,
+        "average_seconds": 810.39,
+        "min_seconds": 749.52,
         "max_seconds": 867.23
       },
       "1440p": {
         "count": 5,
-        "average_seconds": 1253.21,
-        "min_seconds": 1198.17,
+        "average_seconds": 1251.19,
+        "min_seconds": 1188.08,
         "max_seconds": 1310.79
       },
       "4K": {
         "count": 5,
-        "average_seconds": 2869.89,
-        "min_seconds": 2771.83,
+        "average_seconds": 2822.78,
+        "min_seconds": 2676.07,
         "max_seconds": 2967.93
       }
     }
@@ -72,8 +72,8 @@
       "video2": "1080p_dlss_performance.mp4",
       "ssim_mean": 0.9010160905106819,
       "vmaf_mean": 43.94816,
-      "execution_time_seconds": 805.53,
-      "execution_time_formatted": "13m 25s",
+      "execution_time_seconds": 749.52,
+      "execution_time_formatted": "12m 29s",
       "output_json": "results/cyberpunk/quality_comparison/1080p_DLAA_vs_Performance.json",
       "output_csv": "results/cyberpunk/quality_comparison/1080p_DLAA_vs_Performance.csv"
     },
@@ -147,8 +147,8 @@
       "video2": "1440p_dlss_performance.mp4",
       "ssim_mean": 0.8606410613649722,
       "vmaf_mean": 36.179087,
-      "execution_time_seconds": 1198.17,
-      "execution_time_formatted": "19m 58s",
+      "execution_time_seconds": 1188.08,
+      "execution_time_formatted": "19m 48s",
       "output_json": "results/cyberpunk/quality_comparison/1440p_DLAA_vs_Performance.json",
       "output_csv": "results/cyberpunk/quality_comparison/1440p_DLAA_vs_Performance.csv"
     },
@@ -220,10 +220,10 @@
       "frames_compared": 399,
       "video1": "4k_dlaa_run1.mp4",
       "video2": "4k_dlss_performance.mp4",
-      "ssim_mean": 0.5189624804473523,
+      "ssim_mean": 0.7327106326243702,
       "vmaf_mean": null,
-      "execution_time_seconds": 2879.76,
-      "execution_time_formatted": "47m 59s",
+      "execution_time_seconds": 2676.07,
+      "execution_time_formatted": "44m 36s",
       "output_json": "results/cyberpunk/quality_comparison/4K_DLAA_vs_Performance.json",
       "output_csv": "results/cyberpunk/quality_comparison/4K_DLAA_vs_Performance.csv"
     },
@@ -250,10 +250,10 @@
       "frames_compared": 399,
       "video1": "4k_dlaa_run1.mp4",
       "video2": "4k_dlaa_run2.mp4",
-      "ssim_mean": 0.5564903627270571,
+      "ssim_mean": 0.7336987838065249,
       "vmaf_mean": null,
-      "execution_time_seconds": 2771.83,
-      "execution_time_formatted": "46m 11s",
+      "execution_time_seconds": 2740.0,
+      "execution_time_formatted": "45m 40s",
       "output_json": "results/cyberpunk/quality_comparison/4K_DLAA_Consistency.json",
       "output_csv": "results/cyberpunk/quality_comparison/4K_DLAA_Consistency.csv"
     }
