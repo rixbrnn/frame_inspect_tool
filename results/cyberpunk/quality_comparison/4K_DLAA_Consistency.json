@@ -1,5 +1,5 @@
 {
-  "alignment_method": "4k_DLAA_Consistency_retrimmed",
+  "alignment_method": "4K_DLAA_Consistency",
   "video1": "recordings/cyberpunk/trimmed/4k_dlaa_run1.mp4",
   "video2": "recordings/cyberpunk/trimmed/4k_dlaa_run2.mp4",
   "frames_compared": 399,

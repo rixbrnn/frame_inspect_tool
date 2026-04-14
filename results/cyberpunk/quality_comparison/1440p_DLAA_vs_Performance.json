@@ -1,5 +1,5 @@
 {
-  "alignment_method": "1440p_DLAA_vs_Performance_retrimmed",
+  "alignment_method": "1440p_DLAA_vs_Performance",
   "video1": "recordings/cyberpunk/trimmed/1440p_dlaa_run1.mp4",
   "video2": "recordings/cyberpunk/trimmed/1440p_dlss_performance.mp4",
   "frames_compared": 393,
