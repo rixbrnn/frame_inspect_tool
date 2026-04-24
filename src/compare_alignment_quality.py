@@ -21,7 +21,6 @@ import os
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.metrics.frame.perceptual import AdvancedMetrics, compute_all_metrics, LPIPS_AVAILABLE
-from src.metrics.video.vmaf import VMAFMetrics, interpret_vmaf_score
 
 # Check for torch availability (for GPU detection)
 try:
@@ -192,9 +191,6 @@ def compare_alignment_quality(
     sample_rate: int = 1,
     compute_advanced: bool = True,
     use_gpu: bool = True,
-    compute_vmaf: bool = False,
-    vmaf_model: str = 'vmaf_v0.6.1',
-    vmaf_subsample: int = 1,
     extract_fps: bool = False,
     fps_video1: str = None,
     fps_video2: str = None,
@@ -212,9 +208,6 @@ def compare_alignment_quality(
         sample_rate: Sample every Nth frame for frame-by-frame metrics (1 = all frames)
         compute_advanced: Enable advanced metrics (LPIPS, FLIP, optical flow)
         use_gpu: Use GPU acceleration for LPIPS if available
-        compute_vmaf: Compute VMAF video quality metric (requires FFmpeg with libvmaf)
-        vmaf_model: VMAF model version ('vmaf_v0.6.1', 'vmaf_4k_v0.6.1')
-        vmaf_subsample: VMAF frame sampling (1 = all frames, higher = faster but less accurate)
         extract_fps: Extract FPS data from source videos with overlays
         fps_video1: Path to source video with FPS overlay for video1 (if different from video1)
         fps_video2: Path to source video with FPS overlay for video2 (if different from video2)
@@ -510,52 +503,6 @@ def compare_alignment_quality(
         print(f"  Std:    {results['metrics']['optical_flow_consistency']['std']:.2f}")
         print(f"  Median: {results['metrics']['optical_flow_consistency']['median']:.2f}")
 
-    # Compute VMAF if requested (video-level metric)
-    if compute_vmaf:
-        print(f"\n{'='*80}")
-        print("Computing VMAF (Video Multi-method Assessment Fusion)".center(80))
-        print(f"{'='*80}")
-        print(f"\nThis may take several minutes depending on video length...")
-        print(f"Model: {vmaf_model}")
-        print(f"Subsample: every {vmaf_subsample} frame(s)\n")
-
-        try:
-            vmaf_computer = VMAFMetrics(model=vmaf_model)
-            # Note: video1 is reference, video2 is distorted
-            vmaf_results = vmaf_computer.compute_vmaf(
-                reference_video=video1_path,
-                distorted_video=video2_path,
-                subsample=vmaf_subsample
-            )
-
-            results['metrics']['vmaf'] = {
-                "mean": vmaf_results['vmaf_mean'],
-                "harmonic_mean": vmaf_results['vmaf_harmonic_mean'],
-                "min": vmaf_results['vmaf_min'],
-                "max": vmaf_results['vmaf_max'],
-                "median": vmaf_results['vmaf_median'],
-                "std": vmaf_results['vmaf_std']
-            }
-
-            print(f"\n{'='*80}")
-            print("VMAF RESULTS".center(80))
-            print(f"{'='*80}")
-            print(f"\nVMAF Score [0-100, higher is better]:")
-            print(f"  Mean:          {vmaf_results['vmaf_mean']:.2f}")
-            quality_rating = interpret_vmaf_score(vmaf_results['vmaf_mean'])
-            print(f"  Quality:       {quality_rating}")
-            print(f"  Harmonic Mean: {vmaf_results['vmaf_harmonic_mean']:.2f} (conservative)")
-            print(f"  Median:        {vmaf_results['vmaf_median']:.2f}")
-            print(f"  Std Dev:       {vmaf_results['vmaf_std']:.2f}")
-            print(f"  Min:           {vmaf_results['vmaf_min']:.2f}")
-            print(f"  Max:           {vmaf_results['vmaf_max']:.2f}")
-            print(f"  Frames:        {vmaf_results['frames_processed']}")
-            print(f"\n{'='*80}")
-
-        except Exception as e:
-            print(f"\n⚠️  VMAF computation failed: {e}")
-            print("Continuing without VMAF...")
-
     # Add per-frame data (if FPS extraction enabled)
     if extract_fps and per_frame_data_list:
         results['per_frame_data'] = {
@@ -602,7 +549,6 @@ Advanced Metrics:
   • LPIPS: Perceptual similarity using deep learning (requires PyTorch + GPU)
   • FLIP: Visual error with perceptual weighting (NVIDIA-inspired)
   • Optical Flow: Temporal consistency for ghosting detection
-  • VMAF: Netflix's video quality metric with motion compensation (requires FFmpeg with libvmaf)
         """
     )
     parser.add_argument('--video1', required=True, help='First video path (reference/ground truth)')
@@ -615,13 +561,6 @@ Advanced Metrics:
                         help='Skip advanced frame metrics (LPIPS, FLIP, optical flow)')
     parser.add_argument('--cpu', action='store_true',
                         help='Force CPU mode (no GPU acceleration for LPIPS)')
-    parser.add_argument('--vmaf', action='store_true',
-                        help='Compute VMAF video quality metric (requires FFmpeg with libvmaf)')
-    parser.add_argument('--vmaf-model', default='vmaf_v0.6.1',
-                        choices=['vmaf_v0.6.1', 'vmaf_4k_v0.6.1', 'vmaf_v0.6.1neg'],
-                        help='VMAF model version (default: vmaf_v0.6.1, use vmaf_4k_v0.6.1 for 4K)')
-    parser.add_argument('--vmaf-subsample', type=int, default=1,
-                        help='VMAF frame sampling (1=all frames, higher=faster, default: 1)')
 
     # FPS extraction arguments
     parser.add_argument('--extract-fps', action='store_true',
@@ -651,9 +590,6 @@ Advanced Metrics:
         args.sample_rate,
         compute_advanced=not args.no_advanced,
         use_gpu=not args.cpu,
-        compute_vmaf=args.vmaf,
-        vmaf_model=args.vmaf_model,
-        vmaf_subsample=args.vmaf_subsample,
         extract_fps=args.extract_fps if hasattr(args, 'extract_fps') else False,
         fps_video1=args.fps_video1 if hasattr(args, 'fps_video1') else None,
         fps_video2=args.fps_video2 if hasattr(args, 'fps_video2') else None,

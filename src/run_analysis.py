@@ -89,7 +89,6 @@ def run_analysis(config_path: str):
     sample_rate = config['settings'].get('sample_rate', 10)
     compute_advanced = config['settings'].get('compute_advanced', True)
     use_gpu = config['settings'].get('use_gpu', True)
-    compute_vmaf = config['settings'].get('compute_vmaf', True)
     extract_fps = config['settings'].get('extract_fps', True)
 
     comparisons = config['comparisons']
@@ -104,7 +103,6 @@ def run_analysis(config_path: str):
     print(f"Sample rate: every {sample_rate} frames")
     print(f"Advanced metrics: {compute_advanced}")
     print(f"GPU: {use_gpu}")
-    print(f"VMAF: {compute_vmaf}")
     print(f"FPS extraction: {extract_fps}")
     print(f"Total comparisons: {len(comparisons)}")
     print()
@@ -142,7 +140,6 @@ def run_analysis(config_path: str):
                 sample_rate=sample_rate,
                 compute_advanced=compute_advanced,
                 use_gpu=use_gpu,
-                compute_vmaf=compute_vmaf,
                 extract_fps=extract_fps,
                 fps_video1=ref_path,
                 fps_video2=cmp_path,
@@ -164,8 +161,7 @@ def run_analysis(config_path: str):
             results['config'] = {
                 'roi': roi_spec,
                 'sample_rate': sample_rate,
-                'compute_advanced': compute_advanced,
-                'compute_vmaf': compute_vmaf
+                'compute_advanced': compute_advanced
             }
 
             # Save results
@@ -174,15 +170,12 @@ def run_analysis(config_path: str):
 
             print(f"  ✓ Complete in {comparison_duration:.1f}s")
             print(f"  Mean SSIM: {results.get('ssim', {}).get('mean', 0):.4f}")
-            if 'vmaf' in results:
-                print(f"  Mean VMAF: {results.get('vmaf', {}).get('mean', 0):.2f}")
 
             summary.append({
                 'name': name,
                 'status': 'success',
                 'duration_seconds': round(comparison_duration, 2),
-                'mean_ssim': results.get('ssim', {}).get('mean', 0),
-                'mean_vmaf': results.get('vmaf', {}).get('mean', 0) if 'vmaf' in results else None
+                'mean_ssim': results.get('ssim', {}).get('mean', 0)
             })
 
         except Exception as e:
@@ -252,7 +245,6 @@ Config file format (YAML):
     sample_rate: 10
     compute_advanced: true
     use_gpu: true
-    compute_vmaf: true
     extract_fps: true
 
   comparisons:

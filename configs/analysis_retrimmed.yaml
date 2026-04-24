@@ -10,8 +10,8 @@ settings:
   roi: "top-left 10%"           # Corrected ROI to avoid false positives
   sample_rate: 10                # Extract metrics every 10 frames (temporal sampling)
   compute_advanced: true         # Enable LPIPS, FLIP, Optical Flow
-  use_gpu: true                  # Use GPU for LPIPS/VMAF
-  compute_vmaf: true             # Include VMAF metric
+  use_gpu: true                  # Use GPU for LPIPS
+  compute_vmaf: false            # Disabled: redundant with Optical Flow + high computational cost
   extract_fps: true              # Extract FPS data from overlay
 
 comparisons:
