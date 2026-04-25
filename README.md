@@ -212,6 +212,146 @@ comparisons:
 | FPS Extraction | 30 seconds |
 | Full Pipeline | <1 minute |
 
+## 🎬 Video Trimming Workflow
+
+Videos recorded from games often include intro menus, loading screens, and result screens. The trimming workflow removes these non-gameplay sections using OCR-based marker detection.
+
+### Why Trim Videos?
+
+- **Remove non-gameplay content**: Menus, loading screens, benchmark result screens
+- **Focus on gameplay**: Keep only frames where FPS counter is visible
+- **Consistent duration**: All videos trimmed to the same gameplay section
+- **Automated process**: No manual video editing required
+
+### Step 1: Select ROI for Trimming
+
+First, identify where the FPS counter appears on screen:
+
+```bash
+# Select the ROI for the FPS counter (for trimming)
+python3 scripts/roi_selector.py \
+    --video recordings/blackmyth_medium/1080p_dlaa_run1.mp4 \
+    --roi-name trim \
+    --marker-pattern "numeric"
+```
+
+This opens an interactive window where you:
+1. Draw a rectangle around the FPS counter
+2. Press 'SPACE' to confirm
+3. The coordinates are saved to `recordings/blackmyth_medium/roi_trim_coordinates.yaml`
+
+**Optional:** If you also need FPS extraction, create a separate ROI:
+```bash
+python3 scripts/roi_selector.py \
+    --video recordings/blackmyth_medium/1080p_dlaa_run1.mp4 \
+    --roi-name fps \
+    --marker-pattern "numeric"
+```
+
+### Step 2: Trim Videos
+
+Use the batch trimming script to process all videos automatically:
+
+```bash
+# Trim all videos in the directory using ROI config
+python3 scripts/batch_trim.py \
+    --input-dir recordings/blackmyth_medium \
+    --roi-config recordings/blackmyth_medium/roi_trim_coordinates.yaml
+
+# Custom output directory (optional)
+python3 scripts/batch_trim.py \
+    --input-dir recordings/blackmyth_medium \
+    --roi-config recordings/blackmyth_medium/roi_trim_coordinates.yaml \
+    --output-dir recordings/blackmyth_medium/custom_output
+```
+
+**What `batch_trim.py` does:**
+- Finds all video files in the input directory (`.mp4`, `.avi`, `.mov`, `.mkv`, `.webm`)
+- Processes videos sequentially (one at a time)
+- Creates `<input-dir>/trimmed/` directory automatically
+- Provides progress updates for each video
+- Shows summary of successful/failed trims at the end
+
+**Alternative: Single Video Trimming**
+
+To trim a single video manually:
+
+```bash
+python3 src/trim/trim_by_marker.py \
+    --video recordings/blackmyth_medium/1080p_dlaa_run1.mp4 \
+    --output recordings/blackmyth_medium/trimmed/1080p_dlaa_run1.mp4 \
+    --roi-config recordings/blackmyth_medium/roi_trim_coordinates.yaml
+```
+
+**What `trim_by_marker.py` does:**
+1. **Forward scan**: Finds first frame where FPS counter appears (gameplay starts)
+2. **Backward scan**: Finds last frame where FPS counter is visible (gameplay ends)
+3. **FFmpeg trim**: Extracts only the gameplay section using frame-accurate seeking
+4. **Output**: High-quality trimmed video (CRF 18, libx264)
+
+### Alternative: Manual ROI Specification
+
+If you don't have a YAML config, you can specify ROI manually:
+
+```bash
+# Using percentage (resolution-independent, recommended)
+python3 src/trim/trim_by_marker.py \
+    --video recordings/blackmyth_medium/1080p_dlaa_run1.mp4 \
+    --output recordings/blackmyth_medium/trimmed/1080p_dlaa_run1.mp4 \
+    --roi "top-left 10%" \
+    --marker-type fps
+
+# Using pixel coordinates (resolution-specific)
+python3 src/trim/trim_by_marker.py \
+    --video recordings/blackmyth_medium/1080p_dlaa_run1.mp4 \
+    --output recordings/blackmyth_medium/trimmed/1080p_dlaa_run1.mp4 \
+    --roi "0,0,192,108" \
+    --marker-type fps
+```
+
+### ROI Config Format
+
+The `roi_trim_coordinates.yaml` file contains:
+
+```yaml
+roi_name: trim
+video_info:
+  source: 1080p_dlaa_run1.mp4
+  resolution: 1920x1080
+  frame_index: 4090
+  timestamp: 68.2s
+roi:
+  pixels: 885,1013,155,61
+marker:
+  type: fps
+  pattern: numeric
+  regex: \d+\.?\d*
+  description: Numeric FPS counter
+```
+
+The ROI is automatically scaled for different resolutions (e.g., 1080p ROI → 4K ROI).
+
+### Performance Notes
+
+- **Forward scan**: ~10-20 frames/second (OCR on every frame)
+- **Backward scan**: Slower due to random seeking (especially for 4K videos)
+- **Total time**: ~2-5 minutes per 1080p video, ~15-30 minutes per 4K video
+- **Recommendation**: Process videos sequentially to avoid memory issues with large 4K files
+
+### Dry Run Mode
+
+Test trimming detection without actually trimming:
+
+```bash
+python3 src/trim/trim_by_marker.py \
+    --video recordings/blackmyth_medium/1080p_dlaa_run1.mp4 \
+    --output recordings/blackmyth_medium/trimmed/1080p_dlaa_run1.mp4 \
+    --roi-config recordings/blackmyth_medium/roi_trim_coordinates.yaml \
+    --dry-run
+```
+
+This shows you the detected frame range without creating the output file.
+
 ## 📖 Documentation
 
 See `/tcc/claude/` for detailed guides.
