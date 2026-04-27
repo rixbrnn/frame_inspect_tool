@@ -1,0 +1,77 @@
+# Analysis configuration for cod_mw2_extreme dataset
+# Call of Duty: Modern Warfare 2 with extreme graphics settings
+
+paths:
+  base_dir: recordings/cod_mw2_extreme/trimmed
+  results_dir: results/cod_mw2_extreme/quality_comparison
+
+settings:
+  roi: "top-left 10%"           # FPS counter ROI
+  sample_rate: 10                # Extract metrics every 10 frames (temporal sampling)
+  compute_advanced: true         # Enable LPIPS, FLIP, Optical Flow
+  use_gpu: true                  # Use GPU for LPIPS
+  extract_fps: true              # Extract FPS data from overlay
+
+comparisons:
+  # 1080p comparisons
+  - reference: 1080p_dlaa_run1.mp4
+    compare: 1080p_dlss_quality.mp4
+    name: 1080p_DLAA_vs_Quality
+
+  - reference: 1080p_dlaa_run1.mp4
+    compare: 1080p_dlss_balanced.mp4
+    name: 1080p_DLAA_vs_Balanced
+
+  - reference: 1080p_dlaa_run1.mp4
+    compare: 1080p_dlss_performance.mp4
+    name: 1080p_DLAA_vs_Performance
+
+  - reference: 1080p_dlaa_run1.mp4
+    compare: 1080p_dlss_ultra_performance.mp4
+    name: 1080p_DLAA_vs_Ultra_Performance
+
+  - reference: 1080p_dlaa_run1.mp4
+    compare: 1080p_dlaa_run2.mp4
+    name: 1080p_DLAA_Consistency
+
+  # 1440p comparisons
+  - reference: 1440p_dlaa_run1.mp4
+    compare: 1440p_dlss_quality.mp4
+    name: 1440p_DLAA_vs_Quality
+
+  - reference: 1440p_dlaa_run1.mp4
+    compare: 1440p_dlss_balanced.mp4
+    name: 1440p_DLAA_vs_Balanced
+
+  - reference: 1440p_dlaa_run1.mp4
+    compare: 1440p_dlss_performance.mp4
+    name: 1440p_DLAA_vs_Performance
+
+  - reference: 1440p_dlaa_run1.mp4
+    compare: 1440p_dlss_ultra_performance.mp4
+    name: 1440p_DLAA_vs_Ultra_Performance
+
+  - reference: 1440p_dlaa_run1.mp4
+    compare: 1440p_dlaa_run2.mp4
+    name: 1440p_DLAA_Consistency
+
+  # 4K comparisons
+  - reference: 4k_dlaa_run1.mp4
+    compare: 4k_dlss_quality.mp4
+    name: 4K_DLAA_vs_Quality
+
+  - reference: 4k_dlaa_run1.mp4
+    compare: 4k_dlss_balanced.mp4
+    name: 4K_DLAA_vs_Balanced
+
+  - reference: 4k_dlaa_run1.mp4
+    compare: 4k_dlss_performance.mp4
+    name: 4K_DLAA_vs_Performance
+
+  - reference: 4k_dlaa_run1.mp4
+    compare: 4k_dlss_ultra_performance.mp4
+    name: 4K_DLAA_vs_Ultra_Performance
+
+  - reference: 4k_dlaa_run1.mp4
+    compare: 4k_dlaa_run2.mp4
+    name: 4K_DLAA_Consistency

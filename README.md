@@ -48,8 +48,15 @@ frame_inspect_tool/
 │   └── validation/            # Benchmark validation
 │
 ├── configs/                   # Analysis configuration files (YAML)
-│   ├── analysis_retrimmed.yaml       # Re-trimmed videos
-│   └── analysis_cyberpunk_low.yaml   # Low graphics dataset
+│   ├── analysis_retrimmed.yaml                    # Cyberpunk 2077 (re-trimmed)
+│   ├── analysis_cyberpunk_low.yaml                # Cyberpunk 2077 (low graphics)
+│   ├── analysis_tomb_raider_highest_scene_1.yaml  # Shadow of the Tomb Raider (highest graphics)
+│   ├── analysis_blackmyth_medium.yaml             # Black Myth: Wukong (medium graphics)
+│   ├── analysis_cod_mw2_extreme.yaml              # Call of Duty: MW2 (extreme graphics)
+│   ├── analysis_forza_extreme.yaml                # Forza Horizon 5 (extreme graphics)
+│   ├── analysis_marvel_rivals_low.yaml            # Marvel Rivals (low graphics)
+│   ├── analysis_rdr2_ultra.yaml                   # Red Dead Redemption 2 (ultra graphics)
+│   └── analysis_returnal_epic.yaml                # Returnal (epic graphics)
 │
 └── tests/                     # Unit tests
 ```
