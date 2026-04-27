@@ -6,7 +6,7 @@ paths:
   results_dir: results/tomb_raider_highest_scene_1/quality_comparison
 
 settings:
-  roi: "top-left 10%"           # FPS counter ROI
+  # roi: "top-left 10%"           # Optional: FPS counter ROI fallback (will use roi_fps_coordinates.yaml if available)
   sample_rate: 10                # Extract metrics every 10 frames (temporal sampling)
   compute_advanced: true         # Enable LPIPS, FLIP, Optical Flow
   use_gpu: true                  # Use GPU for LPIPS

@@ -20,53 +20,40 @@ import cv2
 import argparse
 
 
-def parse_percentage_roi(roi_str: str, video_path: str) -> tuple:
+def load_roi_from_yaml(base_dir: Path) -> tuple:
     """
-    Parse percentage-based ROI (e.g., "top-left 10%") into pixel coordinates.
+    Load ROI coordinates from roi_fps_coordinates.yaml in the dataset directory.
 
     Args:
-        roi_str: ROI string like "top-left 10%" or "x,y,w,h"
-        video_path: Path to video to get dimensions
+        base_dir: Base directory of the dataset (e.g., recordings/tomb_raider_highest_scene_1/trimmed)
 
     Returns:
         (x, y, width, height) in pixels
+
+    Raises:
+        FileNotFoundError: If roi_fps_coordinates.yaml is not found
     """
-    cap = cv2.VideoCapture(video_path)
-    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    cap.release()
+    # Look for roi_fps_coordinates.yaml in parent directory of base_dir
+    # base_dir is typically "recordings/<dataset>/trimmed"
+    # roi file is at "recordings/<dataset>/roi_fps_coordinates.yaml"
+    dataset_dir = base_dir.parent if base_dir.name == "trimmed" else base_dir
+    roi_yaml_path = dataset_dir / "roi_fps_coordinates.yaml"
 
-    roi_str = roi_str.strip().lower()
+    if not roi_yaml_path.exists():
+        raise FileNotFoundError(
+            f"ROI config not found: {roi_yaml_path}\n"
+            f"Please create it using: python scripts/roi_selector.py --video <video> --roi-name fps"
+        )
 
-    if '%' not in roi_str:
-        # Already pixel format "x,y,w,h"
-        return tuple(map(int, roi_str.split(',')))
+    print(f"  Loading ROI from: {roi_yaml_path}")
+    with open(roi_yaml_path) as f:
+        roi_config = yaml.safe_load(f)
 
-    # Parse "top-left 10%" format
-    parts = roi_str.replace('%', '').split()
-    if len(parts) != 2:
-        raise ValueError(f"Percentage ROI must be 'position percent%', got: {roi_str}")
-
-    position = parts[0]
-    percent = float(parts[1]) / 100.0
-
-    # Calculate ROI size
-    roi_w = int(frame_width * percent)
-    roi_h = int(frame_height * percent)
-
-    # Calculate position
-    if position == "top-left":
-        x, y = 0, 0
-    elif position == "top-right":
-        x, y = frame_width - roi_w, 0
-    elif position == "bottom-left":
-        x, y = 0, frame_height - roi_h
-    elif position == "bottom-right":
-        x, y = frame_width - roi_w, frame_height - roi_h
-    else:
-        raise ValueError(f"Unknown position: {position}")
-
-    return (x, y, roi_w, roi_h)
+    # Extract pixel coordinates from YAML
+    pixels_str = roi_config['roi']['pixels']
+    x, y, w, h = map(int, pixels_str.split(','))
+    print(f"  ROI from YAML: x={x}, y={y}, w={w}, h={h}")
+    return (x, y, w, h)
 
 
 def run_analysis(config_path: str):
@@ -85,7 +72,7 @@ def run_analysis(config_path: str):
     results_path = Path(config['paths']['results_dir'])
     results_path.mkdir(parents=True, exist_ok=True)
 
-    roi_spec = config['settings']['roi']
+    roi_spec = config['settings'].get('roi', None)  # Optional now
     sample_rate = config['settings'].get('sample_rate', 10)
     compute_advanced = config['settings'].get('compute_advanced', True)
     use_gpu = config['settings'].get('use_gpu', True)
@@ -99,7 +86,8 @@ def run_analysis(config_path: str):
     print(f"Config: {config_path}")
     print(f"Base path: {base_path}")
     print(f"Results path: {results_path}")
-    print(f"ROI: {roi_spec}")
+    if roi_spec:
+        print(f"ROI (fallback): {roi_spec}")
     print(f"Sample rate: every {sample_rate} frames")
     print(f"Advanced metrics: {compute_advanced}")
     print(f"GPU: {use_gpu}")
@@ -124,11 +112,12 @@ def run_analysis(config_path: str):
 
         output_json = str(results_path / f"{name}.json")
 
-        # Calculate ROI for this video
-        roi = parse_percentage_roi(roi_spec, cmp_path)
+        # Load ROI from roi_fps_coordinates.yaml
+        roi = load_roi_from_yaml(base_path)
+
         print(f"  Reference: {ref_video}")
         print(f"  Compare: {cmp_video}")
-        print(f"  ROI: {roi}")
+        print(f"  Final ROI: {roi}")
 
         comparison_start_time = time.time()
 
@@ -159,7 +148,8 @@ def run_analysis(config_path: str):
             }
 
             results['config'] = {
-                'roi': roi_spec,
+                'roi_pixels': f"{roi[0]},{roi[1]},{roi[2]},{roi[3]}",
+                'roi_source': 'roi_fps_coordinates.yaml',
                 'sample_rate': sample_rate,
                 'compute_advanced': compute_advanced
             }
