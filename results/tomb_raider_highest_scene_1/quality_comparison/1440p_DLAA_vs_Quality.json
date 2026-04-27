@@ -1,0 +1,54 @@
+{
+  "alignment_method": "1440p_DLAA_vs_Quality",
+  "video1": "recordings/tomb_raider_highest_scene_1/trimmed/1440p_dlaa_run1.mp4",
+  "video2": "recordings/tomb_raider_highest_scene_1/trimmed/1440p_dlss_quality.mp4",
+  "frames_compared": 241,
+  "metrics": {
+    "ssim": {
+      "mean": 0.885219502925295,
+      "std": 0.02618161355016536,
+      "min": 0.8259408203410744,
+      "max": 0.9469870648894303,
+      "median": 0.8817029500956628
+    },
+    "mse": {
+      "mean": 99.70692674190414,
+      "std": 54.07652940935855,
+      "min": 25.369449869791666,
+      "max": 301.20784839771414,
+      "median": 85.92920373987269
+    },
+    "psnr": {
+      "mean": 28.723086137949807,
+      "std": 2.256440792624591,
+      "min": 23.342140770330992,
+      "max": 34.08769311111857,
+      "median": 28.78939573432255
+    },
+    "flip": {
+      "mean": 2.7881655005828305,
+      "std": 0.65464912815147,
+      "min": 1.4117359754774306,
+      "max": 4.226072658962674,
+      "median": 2.8228863525390624
+    },
+    "optical_flow_consistency": {
+      "mean": 10.003980129684717,
+      "std": 12.232981973899763,
+      "min": 0.023061839916096005,
+      "max": 57.91964527271409,
+      "median": 5.207053810402201
+    }
+  },
+  "execution_time": {
+    "start_time": "2026-04-27T11:12:21.047925",
+    "end_time": "2026-04-27T11:18:22.713999",
+    "duration_seconds": 361.67,
+    "frames_analyzed": 0
+  },
+  "config": {
+    "roi": "top-left 10%",
+    "sample_rate": 10,
+    "compute_advanced": true
+  }
+}

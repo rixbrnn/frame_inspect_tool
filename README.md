@@ -65,13 +65,38 @@ frame_inspect_tool/
 
 ### Prerequisites
 
-```bash
-# Install system dependencies
-brew install ffmpeg  # macOS
-# or
-apt install ffmpeg  # Linux
+**This tool is fully cross-platform and works on macOS, Linux, and Windows with identical performance.**
 
-# Install Python dependencies
+**System Dependencies (FFmpeg):**
+
+```bash
+# macOS
+brew install ffmpeg
+
+# Linux
+apt install ffmpeg
+
+# Windows (via Chocolatey)
+choco install ffmpeg
+
+# Windows (manual)
+# Download from: https://ffmpeg.org/download.html#build-windows
+# Add ffmpeg.exe to PATH
+```
+
+**Python Dependencies:**
+
+```bash
+# Create virtual environment (recommended)
+python -m venv .venv
+
+# Activate virtual environment
+# macOS/Linux:
+source .venv/bin/activate
+# Windows:
+.venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 pip install easyocr  # For FPS extraction
 ```
@@ -358,6 +383,110 @@ python3 src/trim/trim_by_marker.py \
 ```
 
 This shows you the detected frame range without creating the output file.
+
+## 📦 Available Datasets
+
+All datasets are available on HuggingFace: https://huggingface.co/datasets/rixbrnn/frame_inspect_tool_data
+
+### Datasets with Analysis Configs
+
+| Dataset | Game | Graphics Setting | Config File |
+|---------|------|------------------|-------------|
+| `cyberpunk` | Cyberpunk 2077 | High (re-trimmed) | `analysis_retrimmed.yaml` |
+| `cyberpunk_low` | Cyberpunk 2077 | Low | `analysis_cyberpunk_low.yaml` |
+| `tomb_raider_highest_scene_1` | Shadow of the Tomb Raider | Highest | `analysis_tomb_raider_highest_scene_1.yaml` |
+| `blackmyth_medium` | Black Myth: Wukong | Medium | `analysis_blackmyth_medium.yaml` |
+| `cod_mw2_extreme` | Call of Duty: MW2 | Extreme | `analysis_cod_mw2_extreme.yaml` |
+| `forza_extreme` | Forza Horizon 5 | Extreme | `analysis_forza_extreme.yaml` |
+| `marvel_rivals_low` | Marvel Rivals | Low | `analysis_marvel_rivals_low.yaml` |
+| `rdr2_ultra` | Red Dead Redemption 2 | Ultra | `analysis_rdr2_ultra.yaml` |
+| `returnal_epic` | Returnal | Epic | `analysis_returnal_epic.yaml` |
+
+Each dataset contains 18 videos (6 per resolution at 1080p, 1440p, 4K):
+- `dlaa_run1.mp4` - Ground truth reference
+- `dlaa_run2.mp4` - Consistency check
+- `dlss_quality.mp4`, `dlss_balanced.mp4`, `dlss_performance.mp4`, `dlss_ultra_performance.mp4`
+
+### Download and Analyze a Dataset
+
+```bash
+# macOS/Linux
+python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='rixbrnn/frame_inspect_tool_data', repo_type='dataset', allow_patterns='tomb_raider_highest_scene_1/*', local_dir='recordings')"
+python src/run_analysis.py --config configs/analysis_tomb_raider_highest_scene_1.yaml
+
+# Windows
+python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='rixbrnn/frame_inspect_tool_data', repo_type='dataset', allow_patterns='tomb_raider_highest_scene_1/*', local_dir='recordings')"
+python src\run_analysis.py --config configs\analysis_tomb_raider_highest_scene_1.yaml
+```
+
+Each analysis produces 15 comparisons (5 per resolution) with:
+- Frame-by-frame metrics (SSIM, PSNR, LPIPS, FLIP, Optical Flow)
+- Extracted FPS data for temporal correlation
+- Summary statistics and execution time
+
+Results saved to: `results/<dataset_name>/quality_comparison/*.json`
+
+## 🪟 Windows-Specific Notes
+
+### FFmpeg Installation (Windows)
+
+**Option A: Chocolatey (Recommended)**
+```powershell
+choco install ffmpeg
+```
+
+**Option B: Manual**
+1. Download from https://ffmpeg.org/download.html#build-windows
+2. Extract to `C:\ffmpeg`
+3. Add `C:\ffmpeg\bin` to PATH (System Properties → Environment Variables)
+4. Verify: `ffmpeg -version`
+
+### GPU Setup (Windows)
+
+For LPIPS GPU acceleration on NVIDIA cards:
+
+```powershell
+# Check GPU
+nvidia-smi
+
+# Install PyTorch with CUDA
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+
+# Verify
+python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}')"
+```
+
+### Common Windows Issues
+
+**Issue: `ffmpeg` not found**
+```powershell
+# Verify FFmpeg is in PATH
+Get-Command ffmpeg
+```
+
+**Issue: EasyOCR model download fails**
+- Check firewall/antivirus settings
+- Models download to: `C:\Users\YourName\.EasyOCR\model\`
+
+**Issue: CUDA out of memory**
+- Edit config file: `use_gpu: false`
+
+### Batch Processing (Windows)
+
+Create `analyze_all.ps1`:
+```powershell
+$datasets = @("tomb_raider_highest_scene_1", "cyberpunk_low", "blackmyth_medium")
+foreach ($dataset in $datasets) {
+    Write-Host "Processing $dataset..." -ForegroundColor Green
+    python src\run_analysis.py --config "configs\analysis_$dataset.yaml"
+}
+```
+
+Run:
+```powershell
+.venv\Scripts\activate
+.\analyze_all.ps1
+```
 
 ## 📖 Documentation
 
