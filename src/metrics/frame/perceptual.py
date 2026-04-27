@@ -481,8 +481,9 @@ class AdvancedMetrics:
 
             # Edge detection on GPU (Canny via Kornia)
             gray1 = kornia.color.rgb_to_grayscale(f1_rgb)
-            # Kornia's Canny returns (magnitude, edges)
-            _, edges1 = kornia.filters.canny(gray1, low_threshold=50.0, high_threshold=150.0)
+            # Kornia's Canny expects normalized thresholds (0-1 range), not 0-255 like OpenCV
+            # OpenCV uses 50, 150 → Kornia uses 50/255 ≈ 0.196, 150/255 ≈ 0.588
+            _, edges1 = kornia.filters.canny(gray1, low_threshold=0.196, high_threshold=0.588)
             edge_mask = (edges1 > 0).float()
 
             # Weight errors near edges more heavily
