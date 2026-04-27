@@ -1,0 +1,71 @@
+# GPU-Accelerated Analysis Commands
+# Run each command in a separate terminal for parallel execution
+# Each analysis will run all comparisons defined in its config file
+
+# ============================================================================
+# Terminal 1: Cyberpunk 2077 (Low Graphics)
+# ============================================================================
+python src/run_analysis.py --config configs/analysis_cyberpunk_low.yaml
+
+# ============================================================================
+# Terminal 2: Cyberpunk 2077 (Original/High Graphics)
+# ============================================================================
+python src/run_analysis.py --config configs/analysis_cyberpunk.yaml
+
+# ============================================================================
+# Terminal 3: Tomb Raider (Highest Settings - Scene 1)
+# ============================================================================
+python src/run_analysis.py --config configs/analysis_tomb_raider_highest_scene_1.yaml
+
+# ============================================================================
+# Terminal 4: Black Myth: Wukong (Medium Settings)
+# ============================================================================
+python src/run_analysis.py --config configs/analysis_blackmyth_medium.yaml
+
+# ============================================================================
+# Terminal 5: Call of Duty: Modern Warfare 2 (Extreme Settings)
+# ============================================================================
+python src/run_analysis.py --config configs/analysis_cod_mw2_extreme.yaml
+
+# ============================================================================
+# Terminal 6: Forza Horizon 5 (Extreme Settings)
+# ============================================================================
+python src/run_analysis.py --config configs/analysis_forza_extreme.yaml
+
+# ============================================================================
+# Terminal 7: Marvel Rivals (Low Settings)
+# ============================================================================
+python src/run_analysis.py --config configs/analysis_marvel_rivals_low.yaml
+
+# ============================================================================
+# Terminal 8: Red Dead Redemption 2 (Ultra Settings)
+# ============================================================================
+python src/run_analysis.py --config configs/analysis_rdr2_ultra.yaml
+
+# ============================================================================
+# Terminal 9: Returnal (Epic Settings)
+# ============================================================================
+python src/run_analysis.py --config configs/analysis_returnal_epic.yaml
+
+# ============================================================================
+# HOW TO USE:
+# ============================================================================
+# 1. Open 9 separate Git Bash terminals
+# 2. In each terminal, navigate to the project directory:
+#    cd ~/workspace/frame_inspect_tool
+# 3. Activate your virtual environment:
+#    source .venv-1/Scripts/activate  (or .venv/Scripts/activate)
+# 4. Copy and paste one command from above into each terminal
+# 5. Press Enter on all terminals to start parallel execution
+#
+# EXPECTED TIME:
+# - Sequential (1 terminal): ~6-10 hours total
+# - Parallel (9 terminals): ~40-60 minutes total
+#
+# MONITORING:
+# - Open nvidia-smi in another terminal to watch GPU usage:
+#   watch -n 1 nvidia-smi
+# - You should see VRAM usage around 2-4GB out of 16GB
+# - GPU utilization should be near 100%
+#
+# ============================================================================
