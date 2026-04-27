@@ -469,10 +469,24 @@ class AdvancedMetrics:
             f2_rgb = torch.flip(f2, dims=[1]) / 255.0
 
             # Convert to LAB on GPU (perceptually uniform color space)
+            # Kornia outputs: L in [0, 100], a in [-128, 127], b in [-128, 127]
+            # OpenCV outputs: L in [0, 255], a in [0, 255], b in [0, 255]
+            # We need to scale Kornia's output to match OpenCV's range
             lab1 = kornia.color.rgb_to_lab(f1_rgb)
             lab2 = kornia.color.rgb_to_lab(f2_rgb)
 
-            # Compute per-channel absolute differences
+            # Scale to OpenCV's range [0, 255]
+            # L: [0, 100] → [0, 255]
+            lab1[:, 0:1, :, :] = lab1[:, 0:1, :, :] * (255.0 / 100.0)
+            lab2[:, 0:1, :, :] = lab2[:, 0:1, :, :] * (255.0 / 100.0)
+            # A: [-128, 127] → [0, 255]
+            lab1[:, 1:2, :, :] = (lab1[:, 1:2, :, :] + 128.0)
+            lab2[:, 1:2, :, :] = (lab2[:, 1:2, :, :] + 128.0)
+            # B: [-128, 127] → [0, 255]
+            lab1[:, 2:3, :, :] = (lab1[:, 2:3, :, :] + 128.0)
+            lab2[:, 2:3, :, :] = (lab2[:, 2:3, :, :] + 128.0)
+
+            # Compute per-channel absolute differences (now in same range as OpenCV)
             diff_l = torch.abs(lab1[:, 0:1, :, :] - lab2[:, 0:1, :, :])
             diff_a = torch.abs(lab1[:, 1:2, :, :] - lab2[:, 1:2, :, :])
             diff_b = torch.abs(lab1[:, 2:3, :, :] - lab2[:, 2:3, :, :])

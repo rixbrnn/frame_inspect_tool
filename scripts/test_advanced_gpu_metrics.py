@@ -76,13 +76,15 @@ def test_flip_equivalence():
 
     # Compare
     diff = abs(cpu_flip - gpu_flip)
-    tolerance = 1.0  # FLIP can have larger differences due to Canny edge detection differences
+    tolerance = 1.0  # Should be much closer now with proper LAB scaling
 
     print(f"\nAbsolute difference: {diff:.6f}")
     print(f"Speedup: {cpu_time/gpu_time:.2f}x")
 
     passed = diff <= tolerance
     print(f"\nResult: {'✓ PASS' if passed else '✗ FAIL'} (tolerance: ±{tolerance})")
+    if diff > 0.5:
+        print("\nNote: Some difference expected due to Canny edge detection implementation differences")
 
     return passed
 
