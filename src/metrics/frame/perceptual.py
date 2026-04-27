@@ -463,11 +463,12 @@ class AdvancedMetrics:
         f2 = self._frame_to_tensor(frame2)
 
         with torch.no_grad():
-            # Convert BGR → LAB on GPU (perceptually uniform color space)
-            # Kornia expects RGB, so we need to flip channels
-            f1_rgb = torch.flip(f1, dims=[1])  # BGR → RGB
-            f2_rgb = torch.flip(f2, dims=[1])
+            # Convert BGR → RGB and normalize to [0, 1] for Kornia
+            # Kornia expects RGB in range [0, 1], but OpenCV uses [0, 255]
+            f1_rgb = torch.flip(f1, dims=[1]) / 255.0  # BGR → RGB, normalize
+            f2_rgb = torch.flip(f2, dims=[1]) / 255.0
 
+            # Convert to LAB on GPU (perceptually uniform color space)
             lab1 = kornia.color.rgb_to_lab(f1_rgb)
             lab2 = kornia.color.rgb_to_lab(f2_rgb)
 
