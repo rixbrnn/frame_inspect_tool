@@ -96,7 +96,7 @@ def compute_mse(source_image, modified_image):
         modified_image = cv2.imread(modified_image)
 
     err = np.sum((source_image.astype("float") - modified_image.astype("float")) ** 2)
-    err /= float(source_image.shape[0] * source_image.shape[1])
+    err /= float(source_image.shape[0] * source_image.shape[1] * source_image.shape[2])
     return err
 
 
