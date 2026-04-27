@@ -15,3 +15,5 @@ huggingface-hub
 torch>=2.0.0              # For LPIPS
 torchvision>=0.15.0       # For LPIPS pretrained models
 lpips>=0.1.4              # Perceptual similarity metric
+
+--extra-index-url https://pypi.ngc.nvidia.com
