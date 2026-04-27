@@ -12,8 +12,10 @@ pytesseract
 huggingface-hub
 
 # Advanced metrics for DLSS evaluation
-torch>=2.0.0              # For LPIPS
+torch>=2.0.0              # For LPIPS and GPU-accelerated metrics
 torchvision>=0.15.0       # For LPIPS pretrained models
 lpips>=0.1.4              # Perceptual similarity metric
+pytorch-msssim>=0.2.1     # GPU-accelerated SSIM (Phase 1)
+kornia>=0.7.0             # GPU computer vision for FLIP and optical flow (Phase 2+4)
 
 --extra-index-url https://pypi.ngc.nvidia.com

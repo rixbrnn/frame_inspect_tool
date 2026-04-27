@@ -21,13 +21,10 @@ import os
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.metrics.frame.perceptual import AdvancedMetrics, compute_all_metrics, LPIPS_AVAILABLE
+from src.metrics.frame.basic import BasicMetricsGPU, TORCH_AVAILABLE, PYTORCH_MSSSIM_AVAILABLE
 
-# Check for torch availability (for GPU detection)
-try:
-    import torch
-    TORCH_AVAILABLE = True
-except ImportError:
-    TORCH_AVAILABLE = False
+# Check for torch availability (for GPU detection) - already imported above via basic.py
+# (removing duplicate import check)
 
 
 # ============================================================================
@@ -268,11 +265,29 @@ def compare_alignment_quality(
 
     # Initialize advanced metrics if requested
     advanced_metrics = None
-    if compute_advanced:
-        device = 'cpu'
-        if use_gpu and TORCH_AVAILABLE and torch.cuda.is_available():
-            device = 'cuda'
+    basic_metrics_gpu = None
+    device = 'cpu'
 
+    if use_gpu and TORCH_AVAILABLE:
+        # Check if CUDA is available
+        import torch  # Import here since TORCH_AVAILABLE is True
+        if torch.cuda.is_available():
+            device = 'cuda'
+            print(f"\n✓ GPU acceleration enabled (device: {device})")
+
+            # Initialize GPU basic metrics
+            try:
+                basic_metrics_gpu = BasicMetricsGPU(device=device)
+                print("  • Basic metrics (SSIM/MSE/PSNR): GPU-accelerated")
+                if not PYTORCH_MSSSIM_AVAILABLE:
+                    print("    ⚠️  pytorch-msssim not found, SSIM will use CPU fallback")
+            except Exception as e:
+                print(f"  ⚠️  Failed to initialize GPU basic metrics: {e}")
+                print("     Falling back to CPU for basic metrics")
+        else:
+            print("\n⚠️  GPU requested but CUDA not available, using CPU")
+
+    if compute_advanced:
         advanced_metrics = AdvancedMetrics(device=device)
         print(f"\n✓ Advanced metrics initialized (device: {device})")
         if LPIPS_AVAILABLE:
@@ -314,20 +329,29 @@ def compare_alignment_quality(
 
         # Sample frames
         if frame_idx % sample_rate == 0:
-            # Existing metrics: SSIM, MSE
-            gray1 = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
-            gray2 = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
+            # Compute basic metrics (SSIM, MSE, PSNR)
+            if basic_metrics_gpu is not None:
+                # GPU-accelerated path
+                gpu_results = basic_metrics_gpu.compute_all(frame1, frame2)
+                ssim_score = gpu_results['ssim']
+                mse = gpu_results['mse']
+                psnr = gpu_results['psnr']
+            else:
+                # CPU fallback path
+                gray1 = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
+                gray2 = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
 
-            # Compute SSIM
-            ssim_score = ssim(gray1, gray2)
+                # Compute SSIM
+                ssim_score = ssim(gray1, gray2)
+
+                # Compute MSE
+                mse = np.mean((frame1.astype(float) - frame2.astype(float)) ** 2)
+
+                # Compute PSNR
+                psnr = cv2.PSNR(frame1, frame2)
+
             ssim_scores.append(ssim_score)
-
-            # Compute MSE
-            mse = np.mean((frame1.astype(float) - frame2.astype(float)) ** 2)
             mse_scores.append(mse)
-
-            # Compute PSNR
-            psnr = cv2.PSNR(frame1, frame2)
             psnr_scores.append(psnr)
 
             # Advanced metrics
