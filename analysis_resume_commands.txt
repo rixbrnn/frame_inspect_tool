@@ -46,6 +46,9 @@ python src/run_analysis.py --config configs/analysis_rdr2_ultra.yaml
 # Terminal 9: Returnal - 10 comparisons remaining
 python src/run_analysis.py --config configs/analysis_returnal_epic.yaml
 
+# Terminal 10: Forza Motorsport - 18 comparisons remaining
+python src/run_analysis.py --config configs/analysis_forza_motorsport_ultra.yaml
+
 # ============================================================================
 # WHAT WILL HAPPEN:
 # ============================================================================
