@@ -1,0 +1,189 @@
+# Analysis Resume Commands (UPDATED)
+# Generated: 2026-04-28
+# Status: 41/135 comparisons completed (30%)
+
+# ============================================================================
+# IMPORTANT: Skip Feature Added!
+# ============================================================================
+
+# The analysis script NOW AUTOMATICALLY SKIPS completed comparisons!
+# Just re-run the same commands and it will continue where it left off.
+
+# If you want to FORCE re-run everything (overwrite results):
+#   Add --force flag: python src/run_analysis.py --config <config> --force
+
+# ============================================================================
+# RESUME COMMANDS - Run these to complete remaining work
+# ============================================================================
+
+# All games still need 1440p + 4K comparisons
+# These will skip the completed 1080p comparisons automatically
+
+# Terminal 1: Cyberpunk 2077 (Low) - 12 comparisons remaining
+python src/run_analysis.py --config configs/analysis_cyberpunk_low.yaml
+
+# Terminal 2: Cyberpunk 2077 (High) - 10 comparisons remaining
+python src/run_analysis.py --config configs/analysis_cyberpunk.yaml
+
+# Terminal 3: Tomb Raider - 9 comparisons remaining
+python src/run_analysis.py --config configs/analysis_tomb_raider_highest_scene_1.yaml
+
+# Terminal 4: Black Myth - 13 comparisons remaining (most work)
+python src/run_analysis.py --config configs/analysis_blackmyth_medium.yaml
+
+# Terminal 5: COD MW2 - 10 comparisons remaining
+python src/run_analysis.py --config configs/analysis_cod_mw2_extreme.yaml
+
+# Terminal 6: Forza - 10 comparisons remaining
+python src/run_analysis.py --config configs/analysis_forza_extreme.yaml
+
+# Terminal 7: Marvel Rivals - 10 comparisons remaining
+python src/run_analysis.py --config configs/analysis_marvel_rivals_low.yaml
+
+# Terminal 8: RDR2 - 11 comparisons remaining
+python src/run_analysis.py --config configs/analysis_rdr2_ultra.yaml
+
+# Terminal 9: Returnal - 10 comparisons remaining
+python src/run_analysis.py --config configs/analysis_returnal_epic.yaml
+
+# ============================================================================
+# WHAT WILL HAPPEN:
+# ============================================================================
+
+# For each comparison:
+# - If result JSON exists → SKIPPED (prints "⏭️ SKIPPED - Result already exists")
+# - If result JSON missing → RUN (processes the comparison)
+# - At the end → Saves summary.json with status of all comparisons
+
+# Example output:
+#   Comparison 1/15: 1080p_DLAA_vs_Quality
+#   ⏭️ SKIPPED - Result already exists: results/.../1080p_DLAA_vs_Quality.json
+#   Existing mean SSIM: 0.9876
+#
+#   Comparison 6/15: 1440p_DLAA_vs_Quality
+#   Reference: 1440p_dlaa_run1.mp4
+#   Compare: 1440p_dlss_quality.mp4
+#   [... processes comparison ...]
+#   ✓ Complete in 245.3s
+
+# ============================================================================
+# COMPLETION STATUS BY GAME
+# ============================================================================
+
+# ✓ 1080p COMPLETE (only need 1440p + 4K):
+# - cod_mw2_extreme: 5/15 done
+# - forza_extreme: 5/15 done
+# - marvel_rivals_low: 5/15 done
+# - returnal_epic: 5/15 done
+# - tomb_raider_highest_scene_1: 6/15 done
+
+# ⚠️ PARTIALLY COMPLETE (need some 1080p + all 1440p/4K):
+# - blackmyth_medium: 2/15 done (13% - only 2 comparisons)
+# - cyberpunk_low: 3/15 done (20% - only partial 1440p)
+# - cyberpunk: 5/15 done (33% - mixed 1080p/1440p)
+# - rdr2_ultra: 4/15 done (27% - missing 1080p consistency)
+
+# ============================================================================
+# ESTIMATED COMPLETION TIME (with GPU acceleration)
+# ============================================================================
+
+# Remaining work: 94 comparisons
+
+# Resolution breakdown:
+# - 1080p: ~3-4 min each
+# - 1440p: ~4-5 min each
+# - 4K: ~6-8 min each
+
+# Sequential (1 terminal): ~6-7 hours
+# Parallel (9 terminals): ~40-50 minutes
+
+# ============================================================================
+# HOW TO RESUME:
+# ============================================================================
+
+# 1. Open 9 Git Bash terminals
+# 2. In each terminal:
+cd ~/workspace/frame_inspect_tool
+source .venv-1/Scripts/activate  # or .venv/Scripts/activate
+
+# 3. Copy one command per terminal from above (lines 19-39)
+# 4. Press Enter on all terminals to start parallel execution
+# 5. Watch the progress - completed comparisons will be skipped!
+
+# ============================================================================
+# MONITORING:
+# ============================================================================
+
+# Open another terminal to watch GPU usage:
+watch -n 1 nvidia-smi
+
+# Expected:
+# - VRAM usage: ~2-4GB out of 16GB (running 9 in parallel)
+# - GPU utilization: 80-100%
+# - Each comparison: 3-8 minutes depending on resolution
+
+# ============================================================================
+# DETAILED MISSING COMPARISONS
+# ============================================================================
+
+# blackmyth_medium (13 missing):
+#   1080p: Consistency, Performance, Ultra_Performance
+#   1440p: ALL 5 (Consistency, Quality, Balanced, Performance, Ultra_Performance)
+#   4K: ALL 5
+
+# cod_mw2_extreme (10 missing):
+#   1080p: ✓ COMPLETE
+#   1440p: ALL 5
+#   4K: ALL 5
+
+# cyberpunk_low (12 missing):
+#   1080p: ALL 5
+#   1440p: Consistency, Ultra_Performance
+#   4K: ALL 5
+
+# cyberpunk (10 missing):
+#   1080p: Consistency, Performance, Ultra_Performance
+#   1440p: Consistency, Ultra_Performance
+#   4K: ALL 5
+
+# forza_extreme (10 missing):
+#   1080p: ✓ COMPLETE
+#   1440p: ALL 5
+#   4K: ALL 5
+
+# marvel_rivals_low (10 missing):
+#   1080p: ✓ COMPLETE
+#   1440p: ALL 5
+#   4K: ALL 5
+
+# rdr2_ultra (11 missing):
+#   1080p: Consistency
+#   1440p: ALL 5
+#   4K: ALL 5
+
+# returnal_epic (10 missing):
+#   1080p: ✓ COMPLETE
+#   1440p: ALL 5
+#   4K: ALL 5
+
+# tomb_raider_highest_scene_1 (9 missing):
+#   1080p: ✓ COMPLETE (plus 1 extra 1440p_vs_Balanced done)
+#   1440p: Consistency, Performance, Quality, Ultra_Performance
+#   4K: ALL 5
+
+# ============================================================================
+# TROUBLESHOOTING:
+# ============================================================================
+
+# If a comparison seems stuck:
+# - Check nvidia-smi to see if GPU is active
+# - Look for error messages in the terminal
+# - Check disk space (results are ~50-100MB per comparison)
+
+# If you want to restart a specific comparison:
+# 1. Delete its JSON file: rm results/<game>/quality_comparison/<name>.json
+# 2. Re-run the analysis command
+# 3. It will re-process just that comparison
+
+# To force re-run ALL comparisons (not recommended):
+python src/run_analysis.py --config configs/<config>.yaml --force

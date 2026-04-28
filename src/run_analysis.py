@@ -56,12 +56,13 @@ def load_roi_from_yaml(base_dir: Path) -> tuple:
     return (x, y, w, h)
 
 
-def run_analysis(config_path: str):
+def run_analysis(config_path: str, force_rerun: bool = False):
     """
     Run analysis based on YAML configuration file.
 
     Args:
         config_path: Path to YAML config file
+        force_rerun: If True, re-run all comparisons even if results exist
     """
     # Load configuration
     with open(config_path) as f:
@@ -111,6 +112,26 @@ def run_analysis(config_path: str):
         cmp_path = str(base_path / cmp_video)
 
         output_json = str(results_path / f"{name}.json")
+
+        # Check if comparison already exists (skip if completed, unless force_rerun)
+        if not force_rerun and Path(output_json).exists():
+            print(f"  ⏭️  SKIPPED - Result already exists: {output_json}")
+            print(f"     (use --force to re-run)")
+            try:
+                with open(output_json) as f:
+                    existing_result = json.load(f)
+                    mean_ssim = existing_result.get('metrics', {}).get('ssim', {}).get('mean', 0)
+                    print(f"  Existing mean SSIM: {mean_ssim:.4f}")
+                    summary.append({
+                        'name': name,
+                        'status': 'skipped',
+                        'mean_ssim': mean_ssim
+                    })
+            except Exception as e:
+                print(f"  ⚠️  Could not read existing result: {e}")
+                print(f"  Will re-run this comparison")
+            else:
+                continue  # Skip to next comparison
 
         # Load ROI from roi_fps_coordinates.yaml
         roi = load_roi_from_yaml(base_path)
@@ -246,6 +267,8 @@ Config file format (YAML):
 
     parser.add_argument('--config', type=str, required=True,
                        help='Path to YAML configuration file')
+    parser.add_argument('--force', action='store_true',
+                       help='Force re-run all comparisons (overwrite existing results)')
 
     args = parser.parse_args()
 
@@ -254,7 +277,7 @@ Config file format (YAML):
         return 1
 
     try:
-        run_analysis(args.config)
+        run_analysis(args.config, force_rerun=args.force)
         return 0
     except Exception as e:
         print(f"\nFatal error: {e}")
