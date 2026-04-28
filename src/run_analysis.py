@@ -28,7 +28,7 @@ def load_roi_from_yaml(base_dir: Path) -> tuple:
         base_dir: Base directory of the dataset (e.g., recordings/tomb_raider_highest_scene_1/trimmed)
 
     Returns:
-        (x, y, width, height) in pixels
+        Tuple of ((x, y, width, height) in pixels, base_resolution_tuple)
 
     Raises:
         FileNotFoundError: If roi_fps_coordinates.yaml is not found
@@ -52,8 +52,55 @@ def load_roi_from_yaml(base_dir: Path) -> tuple:
     # Extract pixel coordinates from YAML
     pixels_str = roi_config['roi']['pixels']
     x, y, w, h = map(int, pixels_str.split(','))
-    print(f"  ROI from YAML: x={x}, y={y}, w={w}, h={h}")
-    return (x, y, w, h)
+
+    # Extract base resolution (the resolution ROI was defined at)
+    base_resolution_str = roi_config.get('video_info', {}).get('resolution', '1920x1080')
+    base_width, base_height = map(int, base_resolution_str.split('x'))
+
+    print(f"  ROI from YAML: x={x}, y={y}, w={w}, h={h} (at {base_resolution_str})")
+    return (x, y, w, h), (base_width, base_height)
+
+
+def scale_roi_for_video(roi: tuple, base_resolution: tuple, video_path: str) -> tuple:
+    """
+    Scale ROI coordinates from base resolution to video's actual resolution.
+
+    Args:
+        roi: (x, y, width, height) at base resolution
+        base_resolution: (width, height) that ROI was defined at
+        video_path: Path to video to get actual resolution
+
+    Returns:
+        Scaled (x, y, width, height) for video resolution
+    """
+    # Get video resolution
+    cap = cv2.VideoCapture(video_path)
+    video_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    video_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    cap.release()
+
+    base_width, base_height = base_resolution
+
+    # If same resolution, no scaling needed
+    if video_width == base_width and video_height == base_height:
+        return roi
+
+    # Calculate scale factors
+    scale_x = video_width / base_width
+    scale_y = video_height / base_height
+
+    # Scale ROI coordinates
+    x, y, w, h = roi
+    scaled_x = int(x * scale_x)
+    scaled_y = int(y * scale_y)
+    scaled_w = int(w * scale_x)
+    scaled_h = int(h * scale_y)
+
+    print(f"  Scaling ROI: {base_width}x{base_height} → {video_width}x{video_height}")
+    print(f"  Original ROI: x={x}, y={y}, w={w}, h={h}")
+    print(f"  Scaled ROI:   x={scaled_x}, y={scaled_y}, w={scaled_w}, h={scaled_h}")
+
+    return (scaled_x, scaled_y, scaled_w, scaled_h)
 
 
 def run_analysis(config_path: str, force_rerun: bool = False):
@@ -134,7 +181,15 @@ def run_analysis(config_path: str, force_rerun: bool = False):
                 continue  # Skip to next comparison
 
         # Load ROI from roi_fps_coordinates.yaml
-        roi = load_roi_from_yaml(base_path)
+        roi_base, base_resolution = load_roi_from_yaml(base_path)
+
+        # Scale ROI for reference video resolution
+        roi_ref = scale_roi_for_video(roi_base, base_resolution, ref_path)
+        # Scale ROI for compare video resolution
+        roi_cmp = scale_roi_for_video(roi_base, base_resolution, cmp_path)
+
+        # Use reference video ROI for FPS extraction (both should be same resolution anyway)
+        roi = roi_ref
 
         print(f"  Reference: {ref_video}")
         print(f"  Compare: {cmp_video}")

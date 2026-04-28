@@ -384,8 +384,8 @@ def compare_alignment_quality(
                 if 'optical_flow' in adv_results:
                     optical_flow_diffs.append(adv_results['optical_flow']['difference'])
 
-            # Collect per-frame data (if FPS extraction enabled)
-            if extract_fps and store_per_frame:
+            # Collect per-frame data (if requested)
+            if store_per_frame:
                 frame_data = {
                     'frame_index': frame_idx,
                     'timestamp': round(frame_idx / cap2.get(cv2.CAP_PROP_FPS), 3),
@@ -394,8 +394,8 @@ def compare_alignment_quality(
                     'psnr': float(psnr)
                 }
 
-                # Add FPS from video2 if available
-                if fps_lookup_v2 and frame_idx in fps_lookup_v2:
+                # Add FPS from video2 if available (only if FPS extraction enabled)
+                if extract_fps and fps_lookup_v2 and frame_idx in fps_lookup_v2:
                     fps_entry = fps_lookup_v2[frame_idx]
                     frame_data['fps'] = fps_entry['fps']
                     frame_data['fps_interpolated'] = fps_entry.get('interpolated', False)
@@ -527,20 +527,20 @@ def compare_alignment_quality(
         print(f"  Std:    {results['metrics']['optical_flow_consistency']['std']:.2f}")
         print(f"  Median: {results['metrics']['optical_flow_consistency']['median']:.2f}")
 
-    # Add per-frame data (if FPS extraction enabled)
-    if extract_fps and per_frame_data_list:
+    # Add per-frame data (if requested and available)
+    if store_per_frame and per_frame_data_list:
         results['per_frame_data'] = {
             "enabled": True,
             "sample_rate": sample_rate,
-            "fps_sample_rate": fps_sample_rate,
-            "fps_source_video1": fps_video1,
-            "fps_source_video2": fps_video2,
+            "fps_sample_rate": fps_sample_rate if extract_fps else None,
+            "fps_source_video1": fps_video1 if extract_fps else None,
+            "fps_source_video2": fps_video2 if extract_fps else None,
             "fps_roi": {
                 "x": fps_roi_used[0],
                 "y": fps_roi_used[1],
                 "width": fps_roi_used[2],
                 "height": fps_roi_used[3]
-            } if fps_roi_used else None,
+            } if extract_fps and fps_roi_used else None,
             "frames": per_frame_data_list
         }
 
