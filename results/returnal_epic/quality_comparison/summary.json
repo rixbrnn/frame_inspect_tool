@@ -1,92 +1,87 @@
 {
-  "config_file": "configs/analysis_tomb_raider_highest_scene_1.yaml",
-  "batch_start": "2026-04-28T09:49:24.247116",
-  "batch_end": "2026-04-28T10:59:03.397946",
-  "total_duration_seconds": 4179.15,
+  "config_file": "configs/analysis_returnal_epic.yaml",
+  "batch_start": "2026-04-28T13:04:38.863731",
+  "batch_end": "2026-04-28T14:27:52.440625",
+  "total_duration_seconds": 4993.58,
   "comparisons": [
     {
       "name": "1080p_DLAA_vs_Quality",
       "status": "skipped",
-      "mean_ssim": 0.8596214268712087
+      "mean_ssim": 0.8159350169465897
     },
     {
       "name": "1080p_DLAA_vs_Balanced",
       "status": "skipped",
-      "mean_ssim": 0.8331942338171836
+      "mean_ssim": 0.8659900792947052
     },
     {
       "name": "1080p_DLAA_vs_Performance",
       "status": "skipped",
-      "mean_ssim": 0.892989515268951
+      "mean_ssim": 0.8352725442842389
     },
     {
       "name": "1080p_DLAA_vs_Ultra_Performance",
       "status": "skipped",
-      "mean_ssim": 0.8502442270393689
+      "mean_ssim": 0.8304114330322184
     },
     {
       "name": "1080p_DLAA_Consistency",
       "status": "skipped",
-      "mean_ssim": 0.8420238893061752
+      "mean_ssim": 0.8638414194820621
     },
     {
       "name": "1440p_DLAA_vs_Quality",
-      "status": "success",
-      "duration_seconds": 233.94,
-      "mean_ssim": 0
+      "status": "skipped",
+      "mean_ssim": 0.8479425934651359
     },
     {
       "name": "1440p_DLAA_vs_Balanced",
       "status": "success",
-      "duration_seconds": 235.07,
+      "duration_seconds": 656.75,
       "mean_ssim": 0
     },
     {
       "name": "1440p_DLAA_vs_Performance",
       "status": "success",
-      "duration_seconds": 232.52,
+      "duration_seconds": 655.6,
       "mean_ssim": 0
     },
     {
       "name": "1440p_DLAA_vs_Ultra_Performance",
       "status": "success",
-      "duration_seconds": 233.22,
+      "duration_seconds": 653.18,
       "mean_ssim": 0
     },
     {
       "name": "1440p_DLAA_Consistency",
       "status": "success",
-      "duration_seconds": 235.95,
+      "duration_seconds": 658.45,
       "mean_ssim": 0
     },
     {
       "name": "4K_DLAA_vs_Quality",
-      "status": "success",
-      "duration_seconds": 599.35,
-      "mean_ssim": 0
+      "status": "failed",
+      "error": "The size of tensor a (2560) must match the size of tensor b (3840) at non-singleton dimension 3"
     },
     {
       "name": "4K_DLAA_vs_Balanced",
-      "status": "success",
-      "duration_seconds": 601.33,
-      "mean_ssim": 0
+      "status": "failed",
+      "error": "The size of tensor a (2560) must match the size of tensor b (3840) at non-singleton dimension 3"
     },
     {
       "name": "4K_DLAA_vs_Performance",
-      "status": "success",
-      "duration_seconds": 609.12,
-      "mean_ssim": 0
+      "status": "failed",
+      "error": "The size of tensor a (2560) must match the size of tensor b (3840) at non-singleton dimension 3"
     },
     {
       "name": "4K_DLAA_vs_Ultra_Performance",
-      "status": "success",
-      "duration_seconds": 603.98,
-      "mean_ssim": 0
+      "status": "failed",
+      "error": "The size of tensor a (2560) must match the size of tensor b (3840) at non-singleton dimension 3"
     },
     {
       "name": "4K_DLAA_Consistency",
       "status": "success",
-      "duration_seconds": 593.66,
+      "duration_seconds": 654.28,
       "mean_ssim": 0
     }
   ]
