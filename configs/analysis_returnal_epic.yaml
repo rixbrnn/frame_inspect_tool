@@ -6,10 +6,11 @@ paths:
   results_dir: results/returnal_epic/quality_comparison
 
 settings:
-  roi: "top-left 10%"           # FPS counter ROI
+  # ROI coordinates are loaded from roi_fps_coordinates.yaml in the dataset directory
+  # and automatically scaled for each video resolution (1080p/1440p/4K)
   sample_rate: 10                # Extract metrics every 10 frames (temporal sampling)
   compute_advanced: true         # Enable LPIPS, FLIP, Optical Flow
-  use_gpu: true                  # Use GPU for LPIPS
+  use_gpu: true                  # Use GPU for LPIPS and advanced metrics
   extract_fps: true              # Extract FPS data from overlay
 
 comparisons:
