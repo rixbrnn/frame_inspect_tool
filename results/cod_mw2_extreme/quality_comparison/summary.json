@@ -1,0 +1,86 @@
+{
+  "config_file": "configs/analysis_cod_mw2_extreme.yaml",
+  "batch_start": "2026-04-28T21:54:08.796635",
+  "batch_end": "2026-04-28T22:56:47.038241",
+  "total_duration_seconds": 3758.24,
+  "comparisons": [
+    {
+      "name": "1080p_DLAA_vs_Quality",
+      "status": "skipped",
+      "mean_ssim": 0.7327548253203947
+    },
+    {
+      "name": "1080p_DLAA_vs_Balanced",
+      "status": "skipped",
+      "mean_ssim": 0.7321275093284894
+    },
+    {
+      "name": "1080p_DLAA_vs_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.7266109899780845
+    },
+    {
+      "name": "1080p_DLAA_vs_Ultra_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.7002063855097371
+    },
+    {
+      "name": "1080p_DLAA_Consistency",
+      "status": "skipped",
+      "mean_ssim": 0.777307623084424
+    },
+    {
+      "name": "1440p_DLAA_vs_Quality",
+      "status": "skipped",
+      "mean_ssim": 0.7286035082918607
+    },
+    {
+      "name": "1440p_DLAA_vs_Balanced",
+      "status": "skipped",
+      "mean_ssim": 0.7118029781498179
+    },
+    {
+      "name": "1440p_DLAA_vs_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.7263640465351653
+    },
+    {
+      "name": "1440p_DLAA_vs_Ultra_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.7373884423809537
+    },
+    {
+      "name": "1440p_DLAA_Consistency",
+      "status": "skipped",
+      "mean_ssim": 0.7987401565210631
+    },
+    {
+      "name": "4K_DLAA_vs_Quality",
+      "status": "skipped",
+      "mean_ssim": 0.7861032868774844
+    },
+    {
+      "name": "4K_DLAA_vs_Balanced",
+      "status": "skipped",
+      "mean_ssim": 0.7196223639266591
+    },
+    {
+      "name": "4K_DLAA_vs_Performance",
+      "status": "success",
+      "duration_seconds": 1306.92,
+      "mean_ssim": 0
+    },
+    {
+      "name": "4K_DLAA_vs_Ultra_Performance",
+      "status": "success",
+      "duration_seconds": 1232.69,
+      "mean_ssim": 0
+    },
+    {
+      "name": "4K_DLAA_Consistency",
+      "status": "success",
+      "duration_seconds": 1218.0,
+      "mean_ssim": 0
+    }
+  ]
+}
