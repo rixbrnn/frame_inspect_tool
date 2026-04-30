@@ -1,0 +1,49 @@
+{
+  "comparison": "1440p_DLAA_vs_Quality",
+  "n_frames_analyzed": 788,
+  "statistical_tests": {
+    "ssim": {
+      "test": "paired_t_test",
+      "n_samples": 788,
+      "statistic": -80.79158755838898,
+      "p_value": 0.0,
+      "significant": true,
+      "mean_difference": -0.5023137995699033,
+      "std_difference": 0.1745307985997103,
+      "ci_95_lower": -0.5145184537055717,
+      "ci_95_upper": -0.4901091454342349,
+      "cohens_d": -2.8780811386875595,
+      "effect_magnitude": "large",
+      "significant_bonferroni": true
+    },
+    "lpips": {
+      "test": "paired_t_test",
+      "n_samples": 788,
+      "statistic": 73.58185024489762,
+      "p_value": 0.0,
+      "significant": true,
+      "mean_difference": 0.46496037196315976,
+      "std_difference": 0.17738150879381634,
+      "ci_95_lower": 0.4525563723123202,
+      "ci_95_upper": 0.4773643716139993,
+      "cohens_d": 2.621244881300551,
+      "effect_magnitude": "large",
+      "significant_bonferroni": true
+    },
+    "flip": {
+      "test": "paired_t_test",
+      "n_samples": 788,
+      "statistic": 58.25705574211502,
+      "p_value": 1.2473928233977333e-287,
+      "significant": true,
+      "mean_difference": 16.834197004774804,
+      "std_difference": 8.111608506976951,
+      "ci_95_lower": 16.266965449623005,
+      "ci_95_upper": 17.401428559926604,
+      "cohens_d": 2.075321681303454,
+      "effect_magnitude": "large",
+      "significant_bonferroni": true
+    }
+  },
+  "bonferroni_corrected_alpha": 0.0011111111111111111
+}

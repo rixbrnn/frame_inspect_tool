@@ -1,0 +1,2 @@
+resolution,metric1,metric1_best,metric1_value,metric2,metric2_best,metric2_value,type
+1440p,SSIM,Ultra_Performance,0.7373884423809537,LPIPS,Quality,0.26684768664082353,SSIM-LPIPS disagreement
