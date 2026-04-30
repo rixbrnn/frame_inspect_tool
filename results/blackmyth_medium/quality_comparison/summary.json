@@ -1,0 +1,90 @@
+{
+  "config_file": "configs/analysis_blackmyth_medium.yaml",
+  "batch_start": "2026-04-30T00:05:15.669930",
+  "batch_end": "2026-04-30T04:29:38.002687",
+  "total_duration_seconds": 15862.33,
+  "comparisons": [
+    {
+      "name": "1080p_DLAA_vs_Quality",
+      "status": "skipped",
+      "mean_ssim": 0.730424984431575
+    },
+    {
+      "name": "1080p_DLAA_vs_Balanced",
+      "status": "skipped",
+      "mean_ssim": 0.7314493916009484
+    },
+    {
+      "name": "1080p_DLAA_vs_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.7289878454948004
+    },
+    {
+      "name": "1080p_DLAA_vs_Ultra_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.7398296155464495
+    },
+    {
+      "name": "1080p_DLAA_Consistency",
+      "status": "skipped",
+      "mean_ssim": 0.7256511535963917
+    },
+    {
+      "name": "1440p_DLAA_vs_Quality",
+      "status": "skipped",
+      "mean_ssim": 0.7111707229940396
+    },
+    {
+      "name": "1440p_DLAA_vs_Balanced",
+      "status": "skipped",
+      "mean_ssim": 0.7225984981599843
+    },
+    {
+      "name": "1440p_DLAA_vs_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.7226491027142642
+    },
+    {
+      "name": "1440p_DLAA_vs_Ultra_Performance",
+      "status": "success",
+      "duration_seconds": 3304.82,
+      "mean_ssim": 0
+    },
+    {
+      "name": "1440p_DLAA_Consistency",
+      "status": "success",
+      "duration_seconds": 2350.39,
+      "mean_ssim": 0
+    },
+    {
+      "name": "4K_DLAA_vs_Quality",
+      "status": "success",
+      "duration_seconds": 2381.64,
+      "mean_ssim": 0
+    },
+    {
+      "name": "4K_DLAA_vs_Balanced",
+      "status": "success",
+      "duration_seconds": 2390.27,
+      "mean_ssim": 0
+    },
+    {
+      "name": "4K_DLAA_vs_Performance",
+      "status": "success",
+      "duration_seconds": 1813.89,
+      "mean_ssim": 0
+    },
+    {
+      "name": "4K_DLAA_vs_Ultra_Performance",
+      "status": "success",
+      "duration_seconds": 1805.39,
+      "mean_ssim": 0
+    },
+    {
+      "name": "4K_DLAA_Consistency",
+      "status": "success",
+      "duration_seconds": 1815.13,
+      "mean_ssim": 0
+    }
+  ]
+}
