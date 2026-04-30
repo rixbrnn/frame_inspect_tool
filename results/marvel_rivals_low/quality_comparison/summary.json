@@ -1,0 +1,86 @@
+{
+  "config_file": "configs/analysis_marvel_rivals_low.yaml",
+  "batch_start": "2026-04-29T19:10:38.625167",
+  "batch_end": "2026-04-29T22:40:09.327555",
+  "total_duration_seconds": 12570.7,
+  "comparisons": [
+    {
+      "name": "1080p_DLAA_vs_Quality",
+      "status": "skipped",
+      "mean_ssim": 0.6652310871354797
+    },
+    {
+      "name": "1080p_DLAA_vs_Balanced",
+      "status": "skipped",
+      "mean_ssim": 0.6568956207484007
+    },
+    {
+      "name": "1080p_DLAA_vs_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.7850305263829582
+    },
+    {
+      "name": "1080p_DLAA_vs_Ultra_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.6874067728125721
+    },
+    {
+      "name": "1080p_DLAA_Consistency",
+      "status": "skipped",
+      "mean_ssim": 0.6575642441235044
+    },
+    {
+      "name": "1440p_DLAA_vs_Quality",
+      "status": "skipped",
+      "mean_ssim": 0.8619126811185304
+    },
+    {
+      "name": "1440p_DLAA_vs_Balanced",
+      "status": "skipped",
+      "mean_ssim": 0.6798448934055427
+    },
+    {
+      "name": "1440p_DLAA_vs_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.6873252972659162
+    },
+    {
+      "name": "1440p_DLAA_vs_Ultra_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.7765599007800441
+    },
+    {
+      "name": "1440p_DLAA_Consistency",
+      "status": "skipped",
+      "mean_ssim": 0.695380901616505
+    },
+    {
+      "name": "4K_DLAA_vs_Quality",
+      "status": "skipped",
+      "mean_ssim": 0.7096354390001473
+    },
+    {
+      "name": "4K_DLAA_vs_Balanced",
+      "status": "skipped",
+      "mean_ssim": 0.7068032178589526
+    },
+    {
+      "name": "4K_DLAA_vs_Performance",
+      "status": "success",
+      "duration_seconds": 4418.73,
+      "mean_ssim": 0
+    },
+    {
+      "name": "4K_DLAA_vs_Ultra_Performance",
+      "status": "success",
+      "duration_seconds": 4528.09,
+      "mean_ssim": 0
+    },
+    {
+      "name": "4K_DLAA_Consistency",
+      "status": "success",
+      "duration_seconds": 3623.35,
+      "mean_ssim": 0
+    }
+  ]
+}

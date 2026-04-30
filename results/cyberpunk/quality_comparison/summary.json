@@ -1,0 +1,86 @@
+{
+  "config_file": "configs/analysis_cyberpunk.yaml",
+  "batch_start": "2026-04-29T19:15:36.376859",
+  "batch_end": "2026-04-29T21:29:41.200019",
+  "total_duration_seconds": 8044.82,
+  "comparisons": [
+    {
+      "name": "1080p_DLAA_vs_Quality",
+      "status": "skipped",
+      "mean_ssim": 0.7954429462552071
+    },
+    {
+      "name": "1080p_DLAA_vs_Balanced",
+      "status": "skipped",
+      "mean_ssim": 0.8353799138663682
+    },
+    {
+      "name": "1080p_DLAA_vs_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.9131801841514451
+    },
+    {
+      "name": "1080p_DLAA_vs_Ultra_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.9168503536219512
+    },
+    {
+      "name": "1080p_DLAA_Consistency",
+      "status": "skipped",
+      "mean_ssim": 0.8238322917295962
+    },
+    {
+      "name": "1440p_DLAA_vs_Quality",
+      "status": "skipped",
+      "mean_ssim": 0.5374699363382018
+    },
+    {
+      "name": "1440p_DLAA_vs_Balanced",
+      "status": "skipped",
+      "mean_ssim": 0.5836015841338652
+    },
+    {
+      "name": "1440p_DLAA_vs_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.8708739778164386
+    },
+    {
+      "name": "1440p_DLAA_vs_Ultra_Performance",
+      "status": "skipped",
+      "mean_ssim": 0.587935933450134
+    },
+    {
+      "name": "1440p_DLAA_Consistency",
+      "status": "skipped",
+      "mean_ssim": 0.7623890475861391
+    },
+    {
+      "name": "4K_DLAA_vs_Quality",
+      "status": "skipped",
+      "mean_ssim": 0.6184907194068259
+    },
+    {
+      "name": "4K_DLAA_vs_Balanced",
+      "status": "skipped",
+      "mean_ssim": 0.7543819333504069
+    },
+    {
+      "name": "4K_DLAA_vs_Performance",
+      "status": "success",
+      "duration_seconds": 2881.62,
+      "mean_ssim": 0
+    },
+    {
+      "name": "4K_DLAA_vs_Ultra_Performance",
+      "status": "success",
+      "duration_seconds": 2586.17,
+      "mean_ssim": 0
+    },
+    {
+      "name": "4K_DLAA_Consistency",
+      "status": "success",
+      "duration_seconds": 2576.53,
+      "mean_ssim": 0
+    }
+  ]
+}
