@@ -1,0 +1,78 @@
+# Analysis configuration for watch_dogs_legion_very_high dataset
+# Black Myth: Wukong with medium graphics settings
+
+paths:
+  base_dir: recordings/watch_dogs_legion_very_high/trimmed
+  results_dir: results/watch_dogs_legion_very_high/quality_comparison
+
+settings:
+  # ROI coordinates are loaded from roi_fps_coordinates.yaml in the dataset directory
+  # and automatically scaled for each video resolution (1080p/1440p/4K)
+  sample_rate: 10                # Extract metrics every 10 frames (temporal sampling)
+  compute_advanced: true         # Enable LPIPS, FLIP, Optical Flow
+  use_gpu: true                  # Use GPU for LPIPS and advanced metrics
+  extract_fps: true              # Extract FPS data from overlay
+
+comparisons:
+  # 1080p comparisons
+  - reference: 1080p_dlaa_run1.mp4
+    compare: 1080p_dlss_quality.mp4
+    name: 1080p_DLAA_vs_Quality
+
+  - reference: 1080p_dlaa_run1.mp4
+    compare: 1080p_dlss_balanced.mp4
+    name: 1080p_DLAA_vs_Balanced
+
+  - reference: 1080p_dlaa_run1.mp4
+    compare: 1080p_dlss_performance.mp4
+    name: 1080p_DLAA_vs_Performance
+
+  - reference: 1080p_dlaa_run1.mp4
+    compare: 1080p_dlss_ultra_performance.mp4
+    name: 1080p_DLAA_vs_Ultra_Performance
+
+  - reference: 1080p_dlaa_run1.mp4
+    compare: 1080p_dlaa_run2.mp4
+    name: 1080p_DLAA_Consistency
+
+  # 1440p comparisons
+  - reference: 1440p_dlaa_run1.mp4
+    compare: 1440p_dlss_quality.mp4
+    name: 1440p_DLAA_vs_Quality
+
+  - reference: 1440p_dlaa_run1.mp4
+    compare: 1440p_dlss_balanced.mp4
+    name: 1440p_DLAA_vs_Balanced
+
+  - reference: 1440p_dlaa_run1.mp4
+    compare: 1440p_dlss_performance.mp4
+    name: 1440p_DLAA_vs_Performance
+
+  - reference: 1440p_dlaa_run1.mp4
+    compare: 1440p_dlss_ultra_performance.mp4
+    name: 1440p_DLAA_vs_Ultra_Performance
+
+  - reference: 1440p_dlaa_run1.mp4
+    compare: 1440p_dlaa_run2.mp4
+    name: 1440p_DLAA_Consistency
+
+  # 4K comparisons
+  - reference: 4k_dlaa_run1.mp4
+    compare: 4k_dlss_quality.mp4
+    name: 4K_DLAA_vs_Quality
+
+  - reference: 4k_dlaa_run1.mp4
+    compare: 4k_dlss_balanced.mp4
+    name: 4K_DLAA_vs_Balanced
+
+  - reference: 4k_dlaa_run1.mp4
+    compare: 4k_dlss_performance.mp4
+    name: 4K_DLAA_vs_Performance
+
+  - reference: 4k_dlaa_run1.mp4
+    compare: 4k_dlss_ultra_performance.mp4
+    name: 4K_DLAA_vs_Ultra_Performance
+
+  - reference: 4k_dlaa_run1.mp4
+    compare: 4k_dlaa_run2.mp4
+    name: 4K_DLAA_Consistency
