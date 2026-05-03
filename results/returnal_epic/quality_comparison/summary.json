@@ -1,8 +1,8 @@
 {
   "config_file": "configs/analysis_returnal_epic.yaml",
-  "batch_start": "2026-04-28T13:04:38.863731",
-  "batch_end": "2026-04-28T14:27:52.440625",
-  "total_duration_seconds": 4993.58,
+  "batch_start": "2026-05-03T18:22:39.823642",
+  "batch_end": "2026-05-03T20:53:03.994679",
+  "total_duration_seconds": 9024.17,
   "comparisons": [
     {
       "name": "1080p_DLAA_vs_Quality",
@@ -36,52 +36,52 @@
     },
     {
       "name": "1440p_DLAA_vs_Balanced",
-      "status": "success",
-      "duration_seconds": 656.75,
-      "mean_ssim": 0
+      "status": "skipped",
+      "mean_ssim": 0.822387368690794
     },
     {
       "name": "1440p_DLAA_vs_Performance",
-      "status": "success",
-      "duration_seconds": 655.6,
-      "mean_ssim": 0
+      "status": "skipped",
+      "mean_ssim": 0.8435758069760844
     },
     {
       "name": "1440p_DLAA_vs_Ultra_Performance",
-      "status": "success",
-      "duration_seconds": 653.18,
-      "mean_ssim": 0
+      "status": "skipped",
+      "mean_ssim": 0.8432419740288011
     },
     {
       "name": "1440p_DLAA_Consistency",
-      "status": "success",
-      "duration_seconds": 658.45,
-      "mean_ssim": 0
+      "status": "skipped",
+      "mean_ssim": 0.8152668621306393
     },
     {
       "name": "4K_DLAA_vs_Quality",
-      "status": "failed",
-      "error": "The size of tensor a (2560) must match the size of tensor b (3840) at non-singleton dimension 3"
+      "status": "success",
+      "duration_seconds": 1814.7,
+      "mean_ssim": 0
     },
     {
       "name": "4K_DLAA_vs_Balanced",
-      "status": "failed",
-      "error": "The size of tensor a (2560) must match the size of tensor b (3840) at non-singleton dimension 3"
+      "status": "success",
+      "duration_seconds": 1804.9,
+      "mean_ssim": 0
     },
     {
       "name": "4K_DLAA_vs_Performance",
-      "status": "failed",
-      "error": "The size of tensor a (2560) must match the size of tensor b (3840) at non-singleton dimension 3"
+      "status": "success",
+      "duration_seconds": 1804.59,
+      "mean_ssim": 0
     },
     {
       "name": "4K_DLAA_vs_Ultra_Performance",
-      "status": "failed",
-      "error": "The size of tensor a (2560) must match the size of tensor b (3840) at non-singleton dimension 3"
+      "status": "success",
+      "duration_seconds": 1791.43,
+      "mean_ssim": 0
     },
     {
       "name": "4K_DLAA_Consistency",
       "status": "success",
-      "duration_seconds": 654.28,
+      "duration_seconds": 1807.91,
       "mean_ssim": 0
     }
   ]
