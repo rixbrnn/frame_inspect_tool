@@ -2,10 +2,25 @@
 """
 Batch trim all videos in a folder sequentially using ROI config.
 
+The script automatically skips videos that are already trimmed (output file exists).
+Use --force to reprocess all videos even if they already exist.
+
 Usage:
+    # Basic usage (skips already trimmed videos)
     python scripts/batch_trim.py \
         --input-dir recordings/forza_extreme \
         --roi-config recordings/forza_extreme/roi_trim_coordinates.yaml
+
+    # Resume interrupted batch processing
+    python scripts/batch_trim.py \
+        --input-dir recordings/cyberpunk \
+        --roi-config recordings/cyberpunk/roi_trim_coordinates.yaml
+
+    # Force reprocess all videos
+    python scripts/batch_trim.py \
+        --input-dir recordings/forza_extreme \
+        --roi-config recordings/forza_extreme/roi_trim_coordinates.yaml \
+        --force
 
     # Custom output directory
     python scripts/batch_trim.py \
@@ -71,6 +86,17 @@ Examples:
       --input-dir recordings/forza_extreme \\
       --roi-config recordings/forza_extreme/roi_trim_coordinates.yaml
 
+  # Resume interrupted batch (skip already trimmed videos)
+  python scripts/batch_trim.py \\
+      --input-dir recordings/cyberpunk \\
+      --roi-config recordings/cyberpunk/roi_trim_coordinates.yaml
+
+  # Force reprocess all videos (even if already trimmed)
+  python scripts/batch_trim.py \\
+      --input-dir recordings/cyberpunk \\
+      --roi-config recordings/cyberpunk/roi_trim_coordinates.yaml \\
+      --force
+
   # Custom output directory
   python scripts/batch_trim.py \\
       --input-dir recordings/cyberpunk \\
@@ -84,6 +110,8 @@ Examples:
                        help='Path to ROI config YAML file')
     parser.add_argument('--output-dir', default=None,
                        help='Output directory (default: <input-dir>/trimmed)')
+    parser.add_argument('--force', action='store_true',
+                       help='Force reprocessing even if trimmed video already exists')
 
     args = parser.parse_args()
 
@@ -121,15 +149,23 @@ Examples:
     print(f"Output directory: {output_dir}")
     print(f"ROI config: {args.roi_config}")
     print(f"Total videos: {len(videos)}")
+    print(f"Force reprocess: {'Yes' if args.force else 'No (will skip existing)'}")
     print()
 
     successful = []
     failed = []
+    skipped = []
 
     for idx, video_path in enumerate(videos, 1):
         output_path = output_dir / video_path.name
 
         print(f"\n[{idx}/{len(videos)}] Processing: {video_path.name}")
+
+        # Check if trimmed video already exists (unless --force is used)
+        if output_path.exists() and not args.force:
+            print(f"⊘ Skipping: {video_path.name} (already trimmed, use --force to reprocess)")
+            skipped.append(video_path.name)
+            continue
 
         # Trim video
         success = trim_video(video_path, args.roi_config, output_path)
@@ -144,7 +180,13 @@ Examples:
     print(f"Batch Trimming Complete")
     print(f"{'='*80}")
     print(f"Successful: {len(successful)}/{len(videos)}")
+    print(f"Skipped: {len(skipped)}/{len(videos)} (already trimmed)")
     print(f"Failed: {len(failed)}/{len(videos)}")
+
+    if skipped:
+        print(f"\nSkipped videos (already exist):")
+        for video in skipped:
+            print(f"  - {video}")
 
     if failed:
         print(f"\nFailed videos:")
@@ -152,7 +194,9 @@ Examples:
             print(f"  - {video}")
         sys.exit(1)
     else:
-        print(f"\n✓ All videos trimmed successfully!")
+        print(f"\n✓ All videos processed successfully!")
+        if skipped:
+            print(f"  ({len(skipped)} were already trimmed and skipped)")
 
 
 if __name__ == '__main__':
