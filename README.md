@@ -49,7 +49,6 @@ frame_inspect_tool/
 │
 ├── configs/                   # Analysis configuration files (YAML)
 │   ├── analysis_retrimmed.yaml                    # Cyberpunk 2077 (re-trimmed)
-│   ├── analysis_cyberpunk_low.yaml                # Cyberpunk 2077 (low graphics)
 │   ├── analysis_tomb_raider_highest_scene_1.yaml  # Shadow of the Tomb Raider (highest graphics)
 │   ├── analysis_blackmyth_medium.yaml             # Black Myth: Wukong (medium graphics)
 │   ├── analysis_cod_mw2_extreme.yaml              # Call of Duty: MW2 (extreme graphics)
@@ -393,7 +392,6 @@ All datasets are available on HuggingFace: https://huggingface.co/datasets/rixbr
 | Dataset | Game | Graphics Setting | Config File |
 |---------|------|------------------|-------------|
 | `cyberpunk` | Cyberpunk 2077 | High (re-trimmed) | `analysis_retrimmed.yaml` |
-| `cyberpunk_low` | Cyberpunk 2077 | Low | `analysis_cyberpunk_low.yaml` |
 | `tomb_raider_highest_scene_1` | Shadow of the Tomb Raider | Highest | `analysis_tomb_raider_highest_scene_1.yaml` |
 | `blackmyth_medium` | Black Myth: Wukong | Medium | `analysis_blackmyth_medium.yaml` |
 | `cod_mw2_extreme` | Call of Duty: MW2 | Extreme | `analysis_cod_mw2_extreme.yaml` |
@@ -475,7 +473,7 @@ Get-Command ffmpeg
 
 Create `analyze_all.ps1`:
 ```powershell
-$datasets = @("tomb_raider_highest_scene_1", "cyberpunk_low", "blackmyth_medium")
+$datasets = @("tomb_raider_highest_scene_1", "blackmyth_medium")
 foreach ($dataset in $datasets) {
     Write-Host "Processing $dataset..." -ForegroundColor Green
     python src\run_analysis.py --config "configs\analysis_$dataset.yaml"

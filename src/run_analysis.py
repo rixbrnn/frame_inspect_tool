@@ -298,9 +298,6 @@ Examples:
   # Run full cyberpunk analysis
   python src/run_analysis.py --config configs/analysis_cyberpunk_full.yaml
 
-  # Run cyberpunk_low analysis
-  python src/run_analysis.py --config configs/analysis_cyberpunk_low.yaml
-
 Config file format (YAML):
   paths:
     base_dir: recordings/cyberpunk/trimmed

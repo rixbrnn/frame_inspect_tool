@@ -62,7 +62,7 @@ pytorch-msssim available: True
 
 ### Enable GPU Acceleration in Config
 
-Edit your analysis config file (e.g., `configs/analysis_cyberpunk_low.yaml`):
+Edit your analysis config file (e.g., `configs/analysis_cyberpunk.yaml`):
 
 ```yaml
 use_gpu: true  # Enable GPU acceleration
@@ -71,7 +71,7 @@ use_gpu: true  # Enable GPU acceleration
 ### Run Analysis
 
 ```bash
-python src/run_analysis.py --config configs/analysis_cyberpunk_low.yaml
+python src/run_analysis.py --config configs/analysis_cyberpunk.yaml
 ```
 
 **Output with GPU:**
@@ -192,7 +192,7 @@ pip install pytorch-msssim
 
 | Study Size | CPU Time | GPU Time | Time Saved |
 |------------|----------|----------|------------|
-| cyberpunk_low (18 videos) | 2-3 hours | 1.5-2 hours | 30-60 min |
+| Single game (18 videos) | 2-3 hours | 1.5-2 hours | 30-60 min |
 | Full 30-comparison study | 6-8 hours | 4-5.5 hours | 1.5-2.5 hours |
 
 **Note:** These are Phase 1 estimates (basic metrics only). Phase 2-4 will provide additional speedup.
@@ -275,7 +275,7 @@ All are optional with CPU fallback.
 ## Next Steps
 
 1. **Test on GPU machine:** Run `python scripts/test_gpu_metrics.py --benchmark`
-2. **Run pilot analysis:** Test 3 comparisons from cyberpunk_low dataset
+2. **Run pilot analysis:** Test 3 comparisons from any single-game dataset
 3. **Validate results:** Compare GPU vs CPU results (should be within ±0.001)
 4. **Run full analysis:** Process all comparisons with GPU acceleration
 5. **Consider Phase 2:** Implement optical flow GPU acceleration for additional 15-25% speedup

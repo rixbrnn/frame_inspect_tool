@@ -3,7 +3,6 @@
 GAMES=(
   "blackmyth_medium"
   "cod_mw2_extreme"
-  "cyberpunk_low"
   "cyberpunk"
   "forza_extreme"
   "forza_motorsport_ultra"
@@ -11,6 +10,7 @@ GAMES=(
   "rdr2_ultra"
   "returnal_epic"
   "tomb_raider_highest_scene_1"
+  "watch_dogs_legion_very_high"
 )
 
 echo "========================================================================"

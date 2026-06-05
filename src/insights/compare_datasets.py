@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Compare quality metrics between two datasets (e.g., ultra vs low graphics)
+Compare quality metrics between two datasets (e.g., different graphics presets)
 
 Usage:
     python src/insights/compare_datasets.py \
         --dataset1 results/cyberpunk/quality_comparison \
-        --dataset2 results/cyberpunk_low/quality_comparison \
-        --label1 "Ultra Graphics" \
-        --label2 "Low Graphics" \
-        --output results/comparison_ultra_vs_low
+        --dataset2 results/blackmyth_medium/quality_comparison \
+        --label1 "Cyberpunk" \
+        --label2 "Black Myth" \
+        --output results/comparison_a_vs_b
 """
 
 import json
@@ -190,13 +190,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Compare ultra vs low graphics
+  # Compare two datasets
   python src/insights/compare_datasets.py \\
       --dataset1 results/cyberpunk/quality_comparison \\
-      --dataset2 results/cyberpunk_low/quality_comparison \\
-      --label1 "Ultra Graphics" \\
-      --label2 "Low Graphics" \\
-      --output results/comparison_ultra_vs_low
+      --dataset2 results/blackmyth_medium/quality_comparison \\
+      --label1 "Cyberpunk" \\
+      --label2 "Black Myth" \\
+      --output results/comparison_a_vs_b
         """
     )
 
