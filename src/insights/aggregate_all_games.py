@@ -21,6 +21,7 @@ Output:
 """
 
 import json
+import sys
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -29,6 +30,15 @@ import seaborn as sns
 import argparse
 from typing import Dict, List, Tuple
 from collections import defaultdict
+
+# Permite importar labels_pt mesmo executando o script diretamente
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from labels_pt import (
+    GAME_DISPLAY_NAMES,
+    GAME_DISPLAY_NAMES_SHORT,
+    display_name,
+    display_names,
+)
 
 
 def load_all_game_results(results_dir: Path) -> pd.DataFrame:
@@ -171,6 +181,11 @@ def plot_ssim_heatmap_by_game(df: pd.DataFrame, output_path: Path):
         existing_modes = [m for m in mode_order if m in pivot.columns]
         pivot = pivot[existing_modes]
 
+        # Aplica nomes oficiais (curtos) aos jogos no eixo Y
+        pivot.index = [display_name(g, short=True) for g in pivot.index]
+        # Nome legível no eixo X (Ultra_Performance → Ultra Performance)
+        pivot.columns = [c.replace('_', ' ') for c in pivot.columns]
+
         # Create heatmap
         sns.heatmap(
             pivot,
@@ -184,11 +199,11 @@ def plot_ssim_heatmap_by_game(df: pd.DataFrame, output_path: Path):
             linewidths=0.5,
             linecolor='gray'
         )
-        axes[idx].set_title(f'{resolution} - SSIM by Game & Mode', fontsize=12, fontweight='bold')
-        axes[idx].set_xlabel('DLSS Mode', fontsize=10)
-        axes[idx].set_ylabel('Game', fontsize=10)
+        axes[idx].set_title(f'{resolution} — SSIM por jogo e modo', fontsize=12, fontweight='bold')
+        axes[idx].set_xlabel('Modo DLSS', fontsize=10)
+        axes[idx].set_ylabel('Jogo', fontsize=10)
 
-    plt.suptitle('SSIM Comparison Across All Games', fontsize=14, fontweight='bold', y=1.02)
+    plt.suptitle('Comparação de SSIM entre jogos', fontsize=14, fontweight='bold', y=1.02)
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
@@ -240,16 +255,16 @@ def plot_mean_metrics_by_mode(df: pd.DataFrame, output_path: Path):
             offset = width * (i - len(resolutions)/2 + 0.5)
             ax.bar(x + offset, values, width, label=resolution, alpha=0.8)
 
-        ax.set_xlabel('DLSS Mode', fontsize=10)
+        ax.set_xlabel('Modo DLSS', fontsize=10)
         ax.set_ylabel(metric_name, fontsize=10)
-        ax.set_title(f'{metric_name} by Mode (Averaged Across Games)', fontsize=11, fontweight='bold')
+        ax.set_title(f'{metric_name} por modo (média entre jogos)', fontsize=11, fontweight='bold')
         ax.set_xticks(x)
-        ax.set_xticklabels(existing_modes, rotation=15, ha='right')
-        ax.legend(title='Resolution')
+        ax.set_xticklabels([m.replace('_', ' ') for m in existing_modes], rotation=15, ha='right')
+        ax.legend(title='Resolução')
         ax.grid(axis='y', alpha=0.3)
         ax.set_ylim(y_min, y_max)
 
-    plt.suptitle('Average Metrics Across All Games', fontsize=14, fontweight='bold')
+    plt.suptitle('Métricas médias entre todos os jogos', fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
@@ -279,12 +294,13 @@ def plot_variance_by_game(df: pd.DataFrame, output_path: Path):
     x = np.arange(len(variance))
 
     ax.bar(x, variance['ssim_std'], alpha=0.7, color='steelblue')
-    ax.set_xlabel('Game', fontsize=11)
-    ax.set_ylabel('SSIM Standard Deviation', fontsize=11)
-    ax.set_title('Metric Variability by Game\n(Higher = More difference between DLSS modes)',
+    ax.set_xlabel('Jogo', fontsize=11)
+    ax.set_ylabel('Desvio padrão de SSIM', fontsize=11)
+    ax.set_title('Variabilidade da métrica por jogo\n(maior = mais diferença entre modos DLSS)',
                  fontsize=12, fontweight='bold')
     ax.set_xticks(x)
-    ax.set_xticklabels(variance['game'], rotation=45, ha='right')
+    ax.set_xticklabels([display_name(g, short=True) for g in variance['game']],
+                       rotation=45, ha='right')
     ax.grid(axis='y', alpha=0.3)
 
     # Annotate with mean SSIM
@@ -310,6 +326,8 @@ def plot_consistency_comparison(df: pd.DataFrame, output_path: Path):
 
     # Pivot: games × resolutions, values = SSIM
     pivot = consistency_df.pivot(index='game', columns='resolution', values='ssim_mean')
+    # Aplica nomes oficiais (curtos) aos jogos
+    pivot.index = [display_name(g, short=True) for g in pivot.index]
 
     fig, ax = plt.subplots(figsize=(10, 8))
 
@@ -320,19 +338,19 @@ def plot_consistency_comparison(df: pd.DataFrame, output_path: Path):
         cmap='RdYlGn',
         vmin=0.5,
         vmax=1.0,
-        cbar_kws={'label': 'SSIM (DLAA run1 vs run2)'},
+        cbar_kws={'label': 'SSIM (DLAA exec1 vs exec2)'},
         ax=ax,
         linewidths=0.5,
         linecolor='gray'
     )
 
-    ax.set_title('Reproducibility Analysis: DLAA Consistency\n(SSIM between two independent DLAA captures)',
+    ax.set_title('Análise de reprodutibilidade: consistência DLAA\n(SSIM entre duas capturas DLAA independentes)',
                 fontsize=12, fontweight='bold')
-    ax.set_xlabel('Resolution', fontsize=10)
-    ax.set_ylabel('Game', fontsize=10)
+    ax.set_xlabel('Resolução', fontsize=10)
+    ax.set_ylabel('Jogo', fontsize=10)
 
     # Add threshold line annotation
-    ax.text(0.5, -0.15, 'Ideal threshold: SSIM ≥ 0.99 | Observed: 0.56-0.82 (high variance)',
+    ax.text(0.5, -0.15, 'Limiar ideal: SSIM ≥ 0.99 | Observado: 0.56–0.82 (alta variância)',
            ha='center', transform=ax.transAxes, fontsize=9, color='red', style='italic')
 
     plt.tight_layout()

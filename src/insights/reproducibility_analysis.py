@@ -234,10 +234,10 @@ def plot_noise_floor(noise_floor_df: pd.DataFrame, output_path: Path):
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
 
     metrics = [
-        ('ssim_consistency_mean', 'SSIM Consistency', 0, 1),
-        ('psnr_consistency_mean', 'PSNR Consistency (dB)', 0, 40),
-        ('lpips_consistency_mean', 'LPIPS Consistency', 0, 0.8),
-        ('flip_consistency_mean', 'FLIP Consistency', 0, 30),
+        ('ssim_consistency_mean', 'Consistência SSIM', 0, 1),
+        ('psnr_consistency_mean', 'Consistência PSNR (dB)', 0, 40),
+        ('lpips_consistency_mean', 'Consistência LPIPS', 0, 0.8),
+        ('flip_consistency_mean', 'Consistência FLIP', 0, 30),
     ]
 
     for idx, (metric_col, metric_name, y_min, y_max) in enumerate(metrics):
@@ -263,9 +263,9 @@ def plot_noise_floor(noise_floor_df: pd.DataFrame, output_path: Path):
                     ax.text(i, means[i] - mdd, f'  MDD: ±{mdd:.3f}',
                            fontsize=8, va='top', color='red')
 
-        ax.set_xlabel('Resolution', fontsize=10)
+        ax.set_xlabel('Resolução', fontsize=10)
         ax.set_ylabel(metric_name, fontsize=10)
-        ax.set_title(f'{metric_name} (Ground Truth Reproducibility)',
+        ax.set_title(f'{metric_name} (reprodutibilidade do ground truth)',
                     fontsize=11, fontweight='bold')
         ax.set_xticks(x)
         ax.set_xticklabels(noise_floor_df['resolution'], rotation=0)
@@ -277,7 +277,7 @@ def plot_noise_floor(noise_floor_df: pd.DataFrame, output_path: Path):
             ax.axhline(0.99, color='green', linestyle=':', alpha=0.5, label='Ideal (≥0.99)')
             ax.legend()
 
-    plt.suptitle('Noise Floor Analysis: DLAA Consistency\n(Minimum Detectable Difference shown as red dashed lines)',
+    plt.suptitle('Análise de noise floor: consistência DLAA\n(diferença mínima detectável indicada por linhas tracejadas em vermelho)',
                 fontsize=13, fontweight='bold')
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
@@ -306,9 +306,9 @@ def plot_power_curves(power_df: pd.DataFrame, output_path: Path):
             ax.plot(res_df['effect_size'], res_df['n_required'],
                    marker='o', label=resolution, color=color, linewidth=2)
 
-        ax.set_xlabel('Effect Size (Cohen\'s d)', fontsize=10)
-        ax.set_ylabel('Required Sample Size (frames)', fontsize=10)
-        ax.set_title(f'{metric} - Power Analysis\n(α=0.05, power=0.80)',
+        ax.set_xlabel('Tamanho do efeito (d de Cohen)', fontsize=10)
+        ax.set_ylabel('Tamanho amostral requerido (frames)', fontsize=10)
+        ax.set_title(f'{metric} - análise de poder\n(α=0.05, poder=0.80)',
                     fontsize=11, fontweight='bold')
         ax.legend()
         ax.grid(alpha=0.3)
@@ -316,10 +316,10 @@ def plot_power_curves(power_df: pd.DataFrame, output_path: Path):
 
         # Add reference lines
         ax.axvline(0.5, color='gray', linestyle=':', alpha=0.5)
-        ax.text(0.5, ax.get_ylim()[1]*0.9, 'Medium\nEffect',
+        ax.text(0.5, ax.get_ylim()[1]*0.9, 'Efeito\nmédio',
                ha='center', fontsize=8, color='gray')
 
-    plt.suptitle('Sample Size Requirements for Detecting Quality Differences',
+    plt.suptitle('Tamanhos amostrais necessários para detectar diferenças de qualidade',
                 fontsize=13, fontweight='bold')
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')

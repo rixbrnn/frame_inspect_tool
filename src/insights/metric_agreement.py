@@ -197,10 +197,10 @@ def plot_correlation_matrix(pearson_corr: pd.DataFrame, spearman_corr: pd.DataFr
         vmin=-1,
         vmax=1,
         square=True,
-        cbar_kws={'label': 'Pearson Correlation'},
+        cbar_kws={'label': 'Correlação de Pearson'},
         ax=axes[0]
     )
-    axes[0].set_title('Pearson Correlation\n(Linear Relationship)', fontweight='bold')
+    axes[0].set_title('Correlação de Pearson\n(Relação linear)', fontweight='bold')
 
     # Spearman correlation
     sns.heatmap(
@@ -212,12 +212,12 @@ def plot_correlation_matrix(pearson_corr: pd.DataFrame, spearman_corr: pd.DataFr
         vmin=-1,
         vmax=1,
         square=True,
-        cbar_kws={'label': 'Spearman Correlation'},
+        cbar_kws={'label': 'Correlação de Spearman'},
         ax=axes[1]
     )
-    axes[1].set_title('Spearman Correlation\n(Rank-Based Relationship)', fontweight='bold')
+    axes[1].set_title('Correlação de Spearman\n(Relação por postos)', fontweight='bold')
 
-    plt.suptitle('Metric Correlation Analysis', fontsize=14, fontweight='bold', y=1.02)
+    plt.suptitle('Análise de correlação entre métricas', fontsize=14, fontweight='bold', y=1.02)
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
@@ -239,7 +239,7 @@ def plot_scatter_matrix(df: pd.DataFrame, output_path: Path):
             if i == j:
                 # Diagonal: histogram
                 ax.hist(df_clean[metric1], bins=20, alpha=0.7, color='steelblue')
-                ax.set_ylabel('Frequency')
+                ax.set_ylabel('Frequência')
             else:
                 # Off-diagonal: scatter plot
                 ax.scatter(df_clean[metric2], df_clean[metric1], alpha=0.6, s=30)
@@ -265,7 +265,7 @@ def plot_scatter_matrix(df: pd.DataFrame, output_path: Path):
 
             ax.grid(alpha=0.3)
 
-    plt.suptitle('Metric Scatter Matrix with Correlations', fontsize=14, fontweight='bold')
+    plt.suptitle('Matriz de dispersão entre métricas com correlações', fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
@@ -293,16 +293,16 @@ def plot_ranking_comparison(ranking_df: pd.DataFrame, output_path: Path):
         ax.bar(x + 0.5*width, res_df['lpips_rank'], width, label='LPIPS', alpha=0.8)
         ax.bar(x + 1.5*width, res_df['flip_rank'], width, label='FLIP', alpha=0.8)
 
-        ax.set_xlabel('DLSS Mode', fontsize=10)
-        ax.set_ylabel('Rank (1=best)', fontsize=10)
-        ax.set_title(f'{resolution} - Ranking by Metric', fontsize=11, fontweight='bold')
+        ax.set_xlabel('Modo DLSS', fontsize=10)
+        ax.set_ylabel('Posto (1=melhor)', fontsize=10)
+        ax.set_title(f'{resolution} - Ranking por métrica', fontsize=11, fontweight='bold')
         ax.set_xticks(x)
         ax.set_xticklabels(res_df['mode'], rotation=15, ha='right')
         ax.legend()
         ax.grid(axis='y', alpha=0.3)
         ax.invert_yaxis()  # Rank 1 at top
 
-    plt.suptitle('Metric Ranking Comparison (Lower Rank = Better)',
+    plt.suptitle('Comparação de rankings entre métricas (posto menor = melhor)',
                 fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
@@ -335,12 +335,12 @@ def plot_ssim_vs_lpips(df: pd.DataFrame, output_path: Path):
     p = np.poly1d(z)
     x_line = np.linspace(df_clean['lpips'].min(), df_clean['lpips'].max(), 100)
     ax.plot(x_line, p(x_line), "r--", alpha=0.8, linewidth=2,
-           label=f'Linear fit (r={r:.3f}, p={p_val:.4f})')
+           label=f'Ajuste linear (r={r:.3f}, p={p_val:.4f})')
 
     # Annotations
-    ax.set_xlabel('LPIPS (Lower = Better)', fontsize=12)
-    ax.set_ylabel('SSIM (Higher = Better)', fontsize=12)
-    ax.set_title('SSIM vs LPIPS: Contradiction Analysis\n(Negative correlation expected)',
+    ax.set_xlabel('LPIPS (menor = melhor)', fontsize=12)
+    ax.set_ylabel('SSIM (maior = melhor)', fontsize=12)
+    ax.set_title('SSIM vs LPIPS: análise de contradição\n(correlação negativa esperada)',
                 fontsize=13, fontweight='bold')
     ax.legend(loc='best')
     ax.grid(alpha=0.3)
@@ -352,10 +352,10 @@ def plot_ssim_vs_lpips(df: pd.DataFrame, output_path: Path):
     ax.axvline(median_lpips, color='gray', linestyle=':', alpha=0.5)
 
     # Annotate quadrants
-    ax.text(0.05, 0.95, 'Good SSIM\nPoor LPIPS',
+    ax.text(0.05, 0.95, 'SSIM bom\nLPIPS ruim',
            transform=ax.transAxes, fontsize=9, verticalalignment='top',
            bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.7))
-    ax.text(0.95, 0.05, 'Poor SSIM\nGood LPIPS',
+    ax.text(0.95, 0.05, 'SSIM ruim\nLPIPS bom',
            transform=ax.transAxes, fontsize=9, verticalalignment='bottom',
            horizontalalignment='right',
            bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.7))

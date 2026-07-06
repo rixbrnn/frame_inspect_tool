@@ -18,6 +18,7 @@ Usage:
 """
 
 import json
+import sys
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -28,6 +29,10 @@ from scipy.stats import pearsonr, spearmanr
 from statsmodels.stats.stattools import durbin_watson
 from typing import Dict, List, Tuple, Optional
 import argparse
+
+# Permite importar labels_pt mesmo executando o script diretamente
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from labels_pt import translate_comparison
 
 
 def load_per_frame_data(json_file: Path) -> Optional[pd.DataFrame]:
@@ -253,7 +258,7 @@ def plot_fps_vs_quality_scatter(df: pd.DataFrame, output_dir: Path):
         if idx == 0:
             ax.legend(fontsize=7, loc='best', ncol=2)
 
-    plt.suptitle('FPS vs Quality Metrics Correlation',
+    plt.suptitle('Correlação entre FPS e métricas de qualidade',
                 fontsize=13, fontweight='bold')
     plt.tight_layout()
     plt.savefig(output_dir / "fps_vs_quality_scatter.png", dpi=300, bbox_inches='tight')
@@ -284,7 +289,7 @@ def plot_temporal_charts(df: pd.DataFrame, output_dir: Path, max_comparisons: in
 
             # Plot quality metric
             color1 = 'tab:blue'
-            ax1.set_xlabel('Time (seconds)', fontsize=10)
+            ax1.set_xlabel('Tempo (segundos)', fontsize=10)
             ax1.set_ylabel(metric.upper(), color=color1, fontsize=10)
             ax1.plot(comp_df['timestamp'], comp_df[metric],
                     color=color1, linewidth=1.5, label=metric.upper())
@@ -302,7 +307,7 @@ def plot_temporal_charts(df: pd.DataFrame, output_dir: Path, max_comparisons: in
             # Compute correlation
             corr_result = compute_correlation_with_autocorr(comp_df, 'fps', metric)
 
-            ax1.set_title(f'{comparison} - FPS vs {metric.upper()}\n' +
+            ax1.set_title(f'{translate_comparison(comparison)} — FPS vs {metric.upper()}\n' +
                          f'Pearson r={corr_result["pearson_r"]:.3f}, ' +
                          f'DW(FPS)={corr_result["x_dw"]:.2f}, DW({metric})={corr_result["y_dw"]:.2f}',
                          fontsize=11, fontweight='bold')
@@ -326,6 +331,9 @@ def plot_correlation_heatmap(corr_df: pd.DataFrame, output_dir: Path):
     # Pivot: comparisons × metrics
     pivot_pearson = corr_df.pivot(index='comparison', columns='metric', values='pearson_r')
     pivot_spearman = corr_df.pivot(index='comparison', columns='metric', values='spearman_rho')
+    # Aplica tradução parcial nos rótulos das comparações
+    pivot_pearson.index = [translate_comparison(c) for c in pivot_pearson.index]
+    pivot_spearman.index = [translate_comparison(c) for c in pivot_spearman.index]
 
     fig, axes = plt.subplots(1, 2, figsize=(16, 8))
 
@@ -333,19 +341,19 @@ def plot_correlation_heatmap(corr_df: pd.DataFrame, output_dir: Path):
     sns.heatmap(pivot_pearson, annot=True, fmt='.3f', cmap='RdBu_r',
                center=0, vmin=-1, vmax=1, ax=axes[0],
                cbar_kws={'label': 'Pearson r'})
-    axes[0].set_title('Pearson Correlation: FPS vs Quality Metrics',
+    axes[0].set_title('Correlação de Pearson: FPS vs métricas de qualidade',
                      fontsize=11, fontweight='bold')
-    axes[0].set_xlabel('Quality Metric', fontsize=10)
-    axes[0].set_ylabel('Comparison', fontsize=10)
+    axes[0].set_xlabel('Métrica de qualidade', fontsize=10)
+    axes[0].set_ylabel('Comparação', fontsize=10)
 
     # Spearman correlation heatmap
     sns.heatmap(pivot_spearman, annot=True, fmt='.3f', cmap='RdBu_r',
                center=0, vmin=-1, vmax=1, ax=axes[1],
                cbar_kws={'label': 'Spearman ρ'})
-    axes[1].set_title('Spearman Correlation: FPS vs Quality Metrics',
+    axes[1].set_title('Correlação de Spearman: FPS vs métricas de qualidade',
                      fontsize=11, fontweight='bold')
-    axes[1].set_xlabel('Quality Metric', fontsize=10)
-    axes[1].set_ylabel('Comparison', fontsize=10)
+    axes[1].set_xlabel('Métrica de qualidade', fontsize=10)
+    axes[1].set_ylabel('Comparação', fontsize=10)
 
     plt.tight_layout()
     plt.savefig(output_dir / "fps_correlation_heatmap.png", dpi=300, bbox_inches='tight')
